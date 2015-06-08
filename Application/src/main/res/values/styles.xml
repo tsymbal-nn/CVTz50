@@ -1,0 +1,24 @@
+<resources>
+
+    <!-- Backward-compatible version of ?android:attr/buttonBarStyle -->
+    <style name="ButtonBar">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:background">@android:drawable/bottom_bar</item>
+    </style>
+
+    <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
+    <style name="ButtonBarButton" />
+
+        <style name="CustomProgressBar" parent="android:Widget.ProgressBar.Horizontal">
+          <item name="android:indeterminateOnly">false</item>
+          <item name="android:progressDrawable">@drawable/custom_progress_bar_horizontal</item>
+          <item name="android:minHeight">5dip</item>
+          <item name="android:maxHeight">5dip</item>
+            <item name="android:paddingBottom">0dp</item>
+            <item name="android:paddingTop">0dp</item>
+        </style>
+
+</resources>
