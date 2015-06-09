@@ -30,6 +30,7 @@ import com.example.android.common.logger.LogFragment;
 import com.example.android.common.logger.LogWrapper;
 import com.example.android.common.logger.MessageOnlyLogFilter;
 
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -43,10 +44,14 @@ public class MainActivity extends SampleActivityBase
         implements BluetoothChatFragment.UpdateDataMonitor {
 
     public static final String TAG = "MainActivity";
+    private static final long REPEAT_INTERVAL = 300 * 1000;
 
     // Whether the Log Fragment is currently shown
     private boolean mLogShown;
     private TextToSpeech tts;
+    private HashMap<Integer, Long> repeatNotify = new HashMap<>();
+
+    private static final int temp[] = { 20, 50, 90 };
 
     BluetoothChatFragment m_fragment1;
     DataMonitorFragment m_fragment2;
@@ -150,14 +155,17 @@ public class MainActivity extends SampleActivityBase
     public void UpdateDataMonitorToActivity(BluetoothChatFragment.CvtDataDump cvtDataDump) {
         m_fragment2.setData(cvtDataDump);
 
-        int temp[] = {20, 50, 90};
-
         for(int t : temp){
             if(cvtDataDump.m_iDataAtfTemp == t){
-                Toast.makeText(getApplicationContext(), "!Current: " + cvtDataDump.m_iDataAtfTemp, Toast.LENGTH_SHORT).show();
-                tts.speak("temperature: " + cvtDataDump.m_iDataAtfTemp, TextToSpeech.QUEUE_FLUSH, null);
+                if(!repeatNotify.containsKey(t) || (repeatNotify.containsKey(t) && System.currentTimeMillis() - repeatNotify.get(t) > REPEAT_INTERVAL)) {
+                    Toast.makeText(getApplicationContext(), "AtfTemp current: " + cvtDataDump.m_iDataAtfTemp, Toast.LENGTH_SHORT).show();
+                    tts.speak("temperature: " + cvtDataDump.m_iDataAtfTemp, TextToSpeech.QUEUE_FLUSH, null);
+                    repeatNotify.put(t, System.currentTimeMillis());
+                }
             }
         }
+
+
     }
 
     public void ShowDataMonitorToActivity (boolean bShowDataMonitor) {
