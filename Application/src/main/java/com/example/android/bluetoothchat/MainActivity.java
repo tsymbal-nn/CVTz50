@@ -17,19 +17,20 @@
 package com.example.android.bluetoothchat;
 
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ViewAnimator;
+import android.widget.Toast;
 
 import com.example.android.common.activities.SampleActivityBase;
 import com.example.android.common.logger.Log;
 import com.example.android.common.logger.LogFragment;
 import com.example.android.common.logger.LogWrapper;
 import com.example.android.common.logger.MessageOnlyLogFilter;
+
+import java.util.Locale;
 
 /**
  * A simple launcher activity containing a summary sample description, sample log and a custom
@@ -45,6 +46,7 @@ public class MainActivity extends SampleActivityBase
 
     // Whether the Log Fragment is currently shown
     private boolean mLogShown;
+    private TextToSpeech tts;
 
     BluetoothChatFragment m_fragment1;
     DataMonitorFragment m_fragment2;
@@ -53,6 +55,25 @@ public class MainActivity extends SampleActivityBase
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener(){
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+
+                    int result = tts.setLanguage(new Locale("en"));
+
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        Log.e("TTS", "language is not supported");
+                    }
+                    tts.setSpeechRate(1.3f);
+                    tts.speak("start", TextToSpeech.QUEUE_FLUSH, null);
+                } else {
+                    Log.e("TTS", "Error");
+                }
+
+            }
+        });
 
         if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -79,6 +100,14 @@ public class MainActivity extends SampleActivityBase
         logToggle.setTitle(mLogShown ? R.string.sample_hide_log : R.string.sample_show_log);
 */
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void onDestroy(){
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -120,6 +149,15 @@ public class MainActivity extends SampleActivityBase
 
     public void UpdateDataMonitorToActivity(BluetoothChatFragment.CvtDataDump cvtDataDump) {
         m_fragment2.setData(cvtDataDump);
+
+        int temp[] = {20, 50, 90};
+
+        for(int t : temp){
+            if(cvtDataDump.m_iDataAtfTemp == t){
+                Toast.makeText(getApplicationContext(), "!Current: " + cvtDataDump.m_iDataAtfTemp, Toast.LENGTH_SHORT).show();
+                tts.speak("temperature: " + cvtDataDump.m_iDataAtfTemp, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        }
     }
 
     public void ShowDataMonitorToActivity (boolean bShowDataMonitor) {
