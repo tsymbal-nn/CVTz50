@@ -1,5 +1,6 @@
 package com.example.android.bluetoothchat;
 
+import android.graphics.Color;
 import android.os.Bundle;
 //import android.app.Fragment;
 import android.support.annotation.Nullable;
@@ -37,6 +38,7 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewRpm;
     TextView m_textViewEngineTemp;
     TextView m_textViewCvtTemp;
+    TextView m_textViewCvtTempIndicator;
     TextView m_textViewSpeed;
     TextView m_textViewLeverPosition;
     TextView m_textViewClutchLockup;
@@ -88,6 +90,7 @@ public class DataMonitorFragment extends Fragment {
         m_textViewConsumptionL100Km = (TextView) view.findViewById(R.id.textViewConsumptionL100Km);
         m_textViewEngineTemp =  (TextView) view.findViewById(R.id.textViewEngineTemp);
         m_textViewCvtTemp = (TextView) view.findViewById(R.id.textViewCvtTemp);
+        m_textViewCvtTempIndicator = (TextView) view.findViewById(R.id.textViewCvtTempIndicator);
         m_textViewClutchLockup = (TextView) view.findViewById(R.id.textViewClutchLockup);
         m_textViewAwdCurrent = (TextView) view.findViewById(R.id.textViewAwdCurrent);
         m_textViewAwdRatio = (TextView) view.findViewById(R.id.textViewAwdRatio);
@@ -105,27 +108,37 @@ public class DataMonitorFragment extends Fragment {
     public void setData(BluetoothChatFragment.CvtDataDump cvtDataDump) {
         m_textViewRpm.setText(cvtDataDump.m_sDataEngSpeedSig);
         m_progressBarRpm.setSecondaryProgress(m_progressBarRpm.getProgress());
-        m_progressBarRpm.setProgress((int)(100*cvtDataDump.m_iDataEngSpeedSig/7000));
+        m_progressBarRpm.setProgress((int) (100 * cvtDataDump.m_iDataEngSpeedSig / 7000));
         m_textViewLeverPosition.setText(cvtDataDump.m_sDataLeverPosition);
         m_textViewSpeed.setText(cvtDataDump.m_sDataVehicleSpeed);
         m_progressBarAccelerator.setSecondaryProgress(m_progressBarAccelerator.getProgress());
-        m_progressBarAccelerator.setProgress((int)(100*cvtDataDump.m_dDataAccPedalOpen/8));
+        m_progressBarAccelerator.setProgress((int) (100 * cvtDataDump.m_dDataAccPedalOpen / 8));
         m_textViewAccelerator.setText(cvtDataDump.m_sDataAccPedalOpen);
 
         m_textViewConsumptionLH.setText(cvtDataDump.m_sEcuInstantConsumptionLiterPerHour);
         m_progressBarConsumptionLH.setSecondaryProgress(m_progressBarConsumptionLH.getProgress());
-        m_progressBarConsumptionLH.setProgress((int)(100*cvtDataDump.m_dEcuInstantConsumptionLiterPerHour/30));
+        m_progressBarConsumptionLH.setProgress((int) (100 * cvtDataDump.m_dEcuInstantConsumptionLiterPerHour / 30));
         m_progressBarConsumptionL100Km.setSecondaryProgress(m_progressBarConsumptionL100Km.getProgress());
-        m_progressBarConsumptionL100Km.setProgress((int)(100*cvtDataDump.m_dEcuInstantConsumptionLiterPer100Km/30));
+        m_progressBarConsumptionL100Km.setProgress((int) (100 * cvtDataDump.m_dEcuInstantConsumptionLiterPer100Km / 30));
         m_textViewConsumptionL100Km.setText(cvtDataDump.m_sEcuInstantConsumptionLiterPer100Km);
 
         if (-50 != cvtDataDump.m_iEcuCoolanTemp) m_textViewEngineTemp.setText(cvtDataDump.m_sEcuCoolanTemp + "°C");
         else m_textViewEngineTemp.setText("∞");
         m_progressBarEngineTemp.setSecondaryProgress(m_progressBarEngineTemp.getProgress());
-        m_progressBarEngineTemp.setProgress((int)(100*(cvtDataDump.m_iEcuCoolanTemp+20)/(120+20)));
+        m_progressBarEngineTemp.setProgress((int) (100 * (cvtDataDump.m_iEcuCoolanTemp + 20) / (120 + 20)));
         m_progressBarCvtTemp.setSecondaryProgress(m_progressBarCvtTemp.getProgress());
-        m_progressBarCvtTemp.setProgress((int)(100*(cvtDataDump.m_iDataAtfTemp+20)/(120+20)));
-        m_textViewCvtTemp.setText(cvtDataDump.m_sDataAtfTemp+"°C");
+        m_progressBarCvtTemp.setProgress((int) (100 * (cvtDataDump.m_iDataAtfTemp + 20) / (120 + 20)));
+        m_textViewCvtTemp.setText(cvtDataDump.m_sDataAtfTemp + "°C");
+
+        String sCvtTempIndicatorString;
+        String sCvtTempIndicatorColor;
+        if (cvtDataDump.m_iDataAtfTemp < 20) { sCvtTempIndicatorString = "COLD"; sCvtTempIndicatorColor = "#FF20A0E0"; }
+        else if (cvtDataDump.m_iDataAtfTemp < 50) { sCvtTempIndicatorString = "WARM"; sCvtTempIndicatorColor = "#FF00C0C0"; }
+        else if (cvtDataDump.m_iDataAtfTemp < 90) { sCvtTempIndicatorString = "OK"; sCvtTempIndicatorColor = "#FF00AA00"; }
+        else if (cvtDataDump.m_iDataAtfTemp < 100) { sCvtTempIndicatorString = "HOT"; sCvtTempIndicatorColor = "#FFFF8000"; }
+        else { sCvtTempIndicatorString = "HOTTER"; sCvtTempIndicatorColor = "#FFFF0000"; }
+        m_textViewCvtTempIndicator.setText(sCvtTempIndicatorString);
+        m_textViewCvtTempIndicator.setBackgroundColor(Color.parseColor(sCvtTempIndicatorColor));
 
         m_textViewClutchLockup.setText(cvtDataDump.m_sDataIsolT1+"A");
         m_progressBarClutchLockup.setSecondaryProgress(m_progressBarClutchLockup.getProgress());

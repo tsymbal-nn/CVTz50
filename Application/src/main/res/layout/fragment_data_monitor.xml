@@ -82,6 +82,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="COLD"
+            android:id="@+id/textViewCvtTempIndicator"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:autoText="false"
+            android:layout_below="@+id/progressBarCvtTemp"
+            android:layout_alignRight="@+id/progressBarCvtTemp"
+            android:background="#FF20A0E0"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="83°C"
             android:id="@+id/textViewCvtTemp"
