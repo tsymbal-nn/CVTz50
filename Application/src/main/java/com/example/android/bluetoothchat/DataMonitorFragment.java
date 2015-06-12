@@ -185,8 +185,10 @@ public class DataMonitorFragment extends Fragment {
             sDtc = cvtDataDump.m_sTime;
         else {
             sDtc = "DTC:";
-            if (0 != cvtDataDump.m_iCvtDtcCount)
+            if (0 != cvtDataDump.m_iCvtDtcCount) {
                 sDtc += " CVT";
+                m_textViewDtc.setBackgroundColor(Color.RED);
+            }
             if (0 != cvtDataDump.m_iEcuDtcFound)
                 sDtc += " ECU";
         }
