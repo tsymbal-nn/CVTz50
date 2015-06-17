@@ -119,6 +119,10 @@ public class DeviceListActivity extends Activity {
             findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
             for (BluetoothDevice device : pairedDevices) {
                 pairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                if (device.getName().equalsIgnoreCase("OBDII")) { // TODO: Better to try first hidden getAliasName() to allow user to control behavior by renaming devices
+                    ReportDeviceSelection(device.getAddress());
+                    break;
+                }
             }
         } else {
             String noDevices = getResources().getText(R.string.none_paired).toString();
@@ -167,22 +171,27 @@ public class DeviceListActivity extends Activity {
     private AdapterView.OnItemClickListener mDeviceClickListener
             = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            // Cancel discovery because it's costly and we're about to connect
-            mBtAdapter.cancelDiscovery();
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
 
-            // Create the result Intent and include the MAC address
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
-
-            // Set result and finish this Activity
-            setResult(Activity.RESULT_OK, intent);
-            finish();
+            ReportDeviceSelection(address);
         }
     };
+
+    private void ReportDeviceSelection(String sAddress) {
+        // Cancel discovery because it's costly and we're about to connect
+        mBtAdapter.cancelDiscovery();
+
+        // Create the result Intent and include the MAC address
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_DEVICE_ADDRESS, sAddress);
+
+        // Set result and finish this Activity
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
 
     /**
      * The BroadcastReceiver that listens for discovered devices and changes the title when
