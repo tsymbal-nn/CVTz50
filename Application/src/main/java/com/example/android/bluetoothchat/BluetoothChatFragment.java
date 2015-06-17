@@ -80,6 +80,7 @@ public class BluetoothChatFragment extends Fragment {
     private boolean m_bConnectionLost = false;
     private int m_iReconnectionDivider = 18;
     private int m_iAutoConnectAction = 0;
+    private DataMonitorAutostartTimer m_DataMonitorAutostartTimer;
 
     /**
      * Name of the connected device
@@ -213,6 +214,7 @@ public class BluetoothChatFragment extends Fragment {
         // Initialize the send button with a listener that for click events
         mSendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                m_DataMonitorAutostartTimer.stop();
                 // Send a message using content of the edit text widget
                 mOutEditText.setFocusableInTouchMode(true);
                 View view = getView();
@@ -228,6 +230,7 @@ public class BluetoothChatFragment extends Fragment {
         // Initialize the CVT Diag button with a listener that for click events
         mCVTDiagButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                m_DataMonitorAutostartTimer.stop();
                 if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
                     Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                     startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
@@ -247,6 +250,7 @@ public class BluetoothChatFragment extends Fragment {
         // Initialize the CVT Diag button with a listener that for click events
         mCVTDeteriorationButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                m_DataMonitorAutostartTimer.stop();
                 if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
                     Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                     startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
@@ -266,6 +270,7 @@ public class BluetoothChatFragment extends Fragment {
         // Initialize the CVT Diag button with a listener that for click events
         mCVTParamsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                m_DataMonitorAutostartTimer.stop();
                 if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
                     Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                     startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
@@ -286,6 +291,9 @@ public class BluetoothChatFragment extends Fragment {
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
+
+        m_DataMonitorAutostartTimer = new DataMonitorAutostartTimer(mHandler);
+        m_DataMonitorAutostartTimer.start();
     }
 
     /**
@@ -459,6 +467,9 @@ public class BluetoothChatFragment extends Fragment {
                         }
                     }
                     break;
+                case Constants.MESSAGE_DATAMONITORAUTOSTARTTIMER:
+                    mCVTParamsButton.performClick();
+                    break;
             }
         }
     };
@@ -579,6 +590,26 @@ public class BluetoothChatFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    private final class DataMonitorAutostartTimer extends TimerTask {
+        Timer m_tTimer;
+        Handler m_hMessageHandler;
+        public DataMonitorAutostartTimer(Handler h) {
+            m_tTimer = new Timer();
+            m_hMessageHandler = h;
+        }
+        public void start() { if (null != m_tTimer) m_tTimer.schedule(this, 10000L); }
+        public void stop() {
+            if (null != m_tTimer) {
+                m_tTimer.cancel();
+                m_tTimer = null;
+            }
+        }
+        @Override public void run() {
+            m_hMessageHandler.sendMessage(m_hMessageHandler.obtainMessage(Constants.MESSAGE_DATAMONITORAUTOSTARTTIMER));
+            stop();
+        }
     }
 
     private final class CVTDiagTimerTask extends TimerTask {
