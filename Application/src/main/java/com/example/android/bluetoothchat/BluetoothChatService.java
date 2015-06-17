@@ -234,11 +234,11 @@ public class BluetoothChatService {
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
-    private void connectionFailed() {
+    private void connectionFailed(String sMessage) {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Constants.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.TOAST, "Unable to connect device");
+        bundle.putString(Constants.TOAST, "Unable to connect: " + sMessage);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
@@ -268,7 +268,7 @@ public class BluetoothChatService {
      * succeeds or fails.
      */
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
         private String mSocketType;
 
@@ -314,8 +314,17 @@ public class BluetoothChatService {
                     Log.e(TAG, "unable to close() " + mSocketType +
                             " socket during connection failure", e2);
                 }
-                connectionFailed();
-                return;
+                // Trying fallback http://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might-closed-bluetooth-on-android-4-3
+                try {
+                    Log.i(TAG, "Unable to connect, trying fallback...");
+                    mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
+                    mmSocket.connect();
+                }
+                catch (Exception e3) {
+                    Log.e(TAG, "Unable to connect using fallback", e3);
+                    connectionFailed(e.getMessage() + " / " + e3.getMessage());
+                    return;
+                }
             }
 
             // Reset the ConnectThread because we're done
