@@ -38,10 +38,14 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewRpm;
     TextView m_textViewEngineTemp;
     TextView m_textViewCvtTemp;
+    TextView m_textViewCvtTempCount;
     TextView m_textViewCvtTempIndicator;
     TextView m_textViewSpeed;
+    TextView m_textViewGSpeed;
     TextView m_textViewLeverPosition;
     TextView m_textViewClutchLockup;
+    TextView m_textViewSlipRev;
+    TextView m_textViewTorqueConverterRatio;
     TextView m_textViewAwdCurrent;
     TextView m_textViewAccelerator;
     TextView m_textViewSecPrsTarget;
@@ -50,12 +54,17 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewGearRatio;
     TextView m_textViewStepMotor;
     TextView m_textViewPriPrs;
+    TextView m_textViewPriPrsTestTitle;
+    TextView m_textViewPriPrsTestResult;
     TextView m_textViewLinePrs;
     TextView m_textViewAwdRatio;
     TextView m_textViewConsumptionLH;
     TextView m_textViewConsumptionL100Km;
     TextView m_textViewDtc;
     TextView m_textViewDeterioration;
+    double m_dDiagnosticPriPrsTestAverage = 0;
+    double m_dDiagnosticPriPrsTestMinimum = 0;
+    int m_dDiagnosticPriPrsTestPointsCount = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,13 +94,17 @@ public class DataMonitorFragment extends Fragment {
         m_textViewRpm = (TextView) view.findViewById(R.id.textViewRpm);
         m_textViewLeverPosition = (TextView) view.findViewById(R.id.textViewLeverPosition);
         m_textViewSpeed = (TextView) view.findViewById(R.id.textViewSpeed);
+        m_textViewGSpeed = (TextView) view.findViewById(R.id.textViewGSpeed);
         m_textViewAccelerator = (TextView) view.findViewById(R.id.textViewAccelerator);
         m_textViewConsumptionLH = (TextView) view.findViewById(R.id.textViewConsumptionLH);
         m_textViewConsumptionL100Km = (TextView) view.findViewById(R.id.textViewConsumptionL100Km);
         m_textViewEngineTemp =  (TextView) view.findViewById(R.id.textViewEngineTemp);
         m_textViewCvtTemp = (TextView) view.findViewById(R.id.textViewCvtTemp);
+        m_textViewCvtTempCount = (TextView) view.findViewById(R.id.textViewCvtTempCount);
         m_textViewCvtTempIndicator = (TextView) view.findViewById(R.id.textViewCvtTempIndicator);
         m_textViewClutchLockup = (TextView) view.findViewById(R.id.textViewClutchLockup);
+        m_textViewSlipRev = (TextView) view.findViewById(R.id.textViewSlipRev);
+        m_textViewTorqueConverterRatio = (TextView) view.findViewById(R.id.textViewTorqueConverterRatio);
         m_textViewAwdCurrent = (TextView) view.findViewById(R.id.textViewAwdCurrent);
         m_textViewAwdRatio = (TextView) view.findViewById(R.id.textViewAwdRatio);
         m_textViewVirtualGear = (TextView) view.findViewById(R.id.textViewVirtualGear);
@@ -100,6 +113,8 @@ public class DataMonitorFragment extends Fragment {
         m_textViewSecPrsTarget = (TextView) view.findViewById(R.id.textViewSecPrsTarget);
         m_textViewSecPrs = (TextView) view.findViewById(R.id.textViewSecPrs);
         m_textViewPriPrs = (TextView) view.findViewById(R.id.textViewPriPrs);
+        m_textViewPriPrsTestTitle = (TextView) view.findViewById(R.id.textViewPriPrsTestTitle);
+        m_textViewPriPrsTestResult = (TextView) view.findViewById(R.id.textViewPriPrsTestResult);
         m_textViewLinePrs = (TextView) view.findViewById(R.id.textViewLinePrs);
         m_textViewDtc = (TextView) view.findViewById(R.id.textViewDtc);
         m_textViewDeterioration = (TextView) view.findViewById(R.id.textViewDeterioration);
@@ -110,7 +125,9 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarRpm.setSecondaryProgress(m_progressBarRpm.getProgress());
         m_progressBarRpm.setProgress((int) (100 * cvtDataDump.m_iDataEngSpeedSig / 7000));
         m_textViewLeverPosition.setText(cvtDataDump.m_sDataLeverPosition);
+        if (cvtDataDump.m_bDataBrakeSw) { m_textViewLeverPosition.setText("(" + m_textViewLeverPosition.getText() + ")"); }
         m_textViewSpeed.setText(cvtDataDump.m_sDataVehicleSpeed);
+        m_textViewGSpeed.setText(cvtDataDump.m_sDataGSpeed);
         m_progressBarAccelerator.setSecondaryProgress(m_progressBarAccelerator.getProgress());
         m_progressBarAccelerator.setProgress((int) (100 * cvtDataDump.m_dDataAccPedalOpen / 8));
         m_textViewAccelerator.setText(cvtDataDump.m_sDataAccPedalOpen);
@@ -129,20 +146,24 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarCvtTemp.setSecondaryProgress(m_progressBarCvtTemp.getProgress());
         m_progressBarCvtTemp.setProgress((int) (100 * (cvtDataDump.m_iDataAtfTemp + 20) / (120 + 20)));
         m_textViewCvtTemp.setText(cvtDataDump.m_sDataAtfTemp + "°C");
+        m_textViewCvtTempCount.setText(cvtDataDump.m_sDataAtfTempCount);
 
         String sCvtTempIndicatorString;
         String sCvtTempIndicatorColor;
         if (cvtDataDump.m_iDataAtfTemp < 20) { sCvtTempIndicatorString = "COLD"; sCvtTempIndicatorColor = "#FF20A0E0"; }
         else if (cvtDataDump.m_iDataAtfTemp < 50) { sCvtTempIndicatorString = "WARM"; sCvtTempIndicatorColor = "#FF00C0C0"; }
         else if (cvtDataDump.m_iDataAtfTemp < 90) { sCvtTempIndicatorString = "OK"; sCvtTempIndicatorColor = "#FF00AA00"; }
-        else if (cvtDataDump.m_iDataAtfTemp < 100) { sCvtTempIndicatorString = "HOT"; sCvtTempIndicatorColor = "#FFFF8000"; }
+        else if (cvtDataDump.m_iDataAtfTemp < 110) { sCvtTempIndicatorString = "HOT"; sCvtTempIndicatorColor = "#FFFF8000"; }
         else { sCvtTempIndicatorString = "HOTTER"; sCvtTempIndicatorColor = "#FFFF0000"; }
         m_textViewCvtTempIndicator.setText(sCvtTempIndicatorString);
         m_textViewCvtTempIndicator.setBackgroundColor(Color.parseColor(sCvtTempIndicatorColor));
 
         m_textViewClutchLockup.setText(cvtDataDump.m_sDataIsolT1+"A");
         m_progressBarClutchLockup.setSecondaryProgress(m_progressBarClutchLockup.getProgress());
-        m_progressBarClutchLockup.setProgress((int)(100*cvtDataDump.m_dDataIsolT1/0.7));
+        m_progressBarClutchLockup.setProgress((int) (100 * cvtDataDump.m_dDataIsolT1 / 0.7));
+        m_textViewSlipRev.setText(cvtDataDump.m_sDataSlipRev + ( (127 == cvtDataDump.m_iDataSlipRev || -127 == cvtDataDump.m_iDataSlipRev) ? "+" : "" ) );
+        m_textViewTorqueConverterRatio.setText(cvtDataDump.m_sDataTrqRto);
+
         m_progressBarAwdCurrent.setSecondaryProgress(m_progressBarAwdCurrent.getProgress());
         m_progressBarAwdCurrent.setProgress((int)(100*cvtDataDump.m_dAwdDataEtsSolenoid/1.8));
         m_textViewAwdCurrent.setText(cvtDataDump.m_sAwdDataEtsSolenoid+"A");
@@ -193,5 +214,19 @@ public class DataMonitorFragment extends Fragment {
                 sDtc += " ECU";
         }
         m_textViewDtc.setText(sDtc);
+
+        // Pri Prs test during full stop with stm_step=4
+        if (cvtDataDump.m_iDataAtfTemp >= 50 && 0 == cvtDataDump.m_iDataVehicleSpeed && cvtDataDump.m_bDataBrakeSw && 4 == cvtDataDump.m_iDataStmStep && Math.abs(cvtDataDump.m_dDataTgtSecPrs - 0.7) < 0.1 && Math.abs(cvtDataDump.m_dDataSecPress - 0.7) < 0.1 && cvtDataDump.m_sDataLeverPosition.contentEquals("D")) {
+            if (0 == m_dDiagnosticPriPrsTestPointsCount) {
+                m_dDiagnosticPriPrsTestMinimum = cvtDataDump.m_dDataPriPress;
+                m_textViewPriPrsTestTitle.setVisibility(View.VISIBLE);
+                m_textViewPriPrsTestResult.setVisibility(View.VISIBLE);
+            }
+            if (cvtDataDump.m_dDataPriPress < m_dDiagnosticPriPrsTestMinimum) m_dDiagnosticPriPrsTestMinimum = cvtDataDump.m_dDataPriPress;
+            m_dDiagnosticPriPrsTestAverage = ((m_dDiagnosticPriPrsTestAverage * m_dDiagnosticPriPrsTestPointsCount) + cvtDataDump.m_dDataPriPress) / ++m_dDiagnosticPriPrsTestPointsCount;
+            m_textViewPriPrsTestResult.setText(String.format("%.2f", m_dDiagnosticPriPrsTestMinimum) + "/" + String.format("%.2f", m_dDiagnosticPriPrsTestAverage));
+            if (m_dDiagnosticPriPrsTestMinimum < 0.4) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF0000"));
+            else if (m_dDiagnosticPriPrsTestMinimum < 0.5) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF8000"));
+        }
     }
 }

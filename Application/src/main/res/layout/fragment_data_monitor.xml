@@ -115,6 +115,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="156"
+            android:id="@+id/textViewCvtTempCount"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:autoText="false"
+            android:textStyle="bold"
+            android:layout_below="@+id/progressBarCvtTemp"
+            android:layout_toRightOf="@+id/textView32"
+            android:layout_toEndOf="@+id/textView32" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text=" KM/H"
             android:id="@+id/textView3"
@@ -143,7 +158,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="0.650A"
+            android:text="0.65A"
             android:id="@+id/textViewClutchLockup"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -152,6 +167,22 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="1.85"
+            android:id="@+id/textViewTorqueConverterRatio"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:autoText="false"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="false"
+            android:layout_above="@+id/progressBarGearRatio"
+            android:layout_toLeftOf="@+id/textView30" />
 
         <ProgressBar
             style="@style/CustomProgressBar"
@@ -182,7 +213,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="1.050A"
+            android:text="1.05A"
             android:id="@+id/textViewAwdCurrent"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -465,13 +496,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" CVT Temperature"
+            android:text=" CVT Temp/Count"
             android:id="@+id/textView"
             android:elegantTextHeight="false"
             android:editable="false"
             android:enabled="true"
             android:autoText="false"
-            android:layout_toRightOf="@+id/textViewCvtTemp"
+            android:layout_toRightOf="@+id/textViewCvtTempCount"
             android:layout_alignTop="@+id/textViewCvtTemp"
             android:textColor="#FF444444" />
 
@@ -504,6 +535,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="-0.33"
+            android:id="@+id/textViewGSpeed"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textStyle="bold"
+            android:layout_below="@+id/progressBarAccelerator"
+            android:layout_toLeftOf="@+id/textView33"
+            android:layout_toStartOf="@+id/textView20" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text=" Accelerator"
             android:id="@+id/textView4"
@@ -518,7 +563,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" Clutch Lock-up ISOLT1"
+            android:text=" Clutch ISOLT1"
             android:id="@+id/textView5"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -611,7 +656,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" Virtual Gear"
+            android:text=" Virt.Gear"
             android:id="@+id/textView12"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -629,7 +674,7 @@
             android:elegantTextHeight="false"
             android:editable="false"
             android:enabled="true"
-            android:layout_toLeftOf="@+id/textViewGearRatio"
+            android:layout_toLeftOf="@+id/textViewTorqueConverterRatio"
             android:layout_alignBottom="@+id/textViewGearRatio"
             android:textColor="#FF444444" />
 
@@ -637,7 +682,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" Step Motor STM STEP"
+            android:text=" Step Motor STEP"
             android:id="@+id/textView14"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -780,7 +825,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/progressBarClutchLockup"
-            android:layout_marginTop="-10dp" />
+            android:layout_marginTop="-8dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -856,6 +901,122 @@
             android:textColor="#FF444444"
             android:layout_alignBottom="@+id/textViewDeterioration"
             android:layout_toRightOf="@+id/textViewDeterioration" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="-127+"
+            android:id="@+id/textViewSlipRev"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:autoText="false"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/progressBarClutchLockup" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="SlipRev "
+            android:id="@+id/textView31"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_toLeftOf="@+id/textViewSlipRev"
+            android:layout_toStartOf="@+id/textViewSlipRev"
+            android:layout_alignBottom="@+id/textViewSlipRev" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="×"
+            android:id="@+id/textView30"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_alignBottom="@+id/textViewGearRatio"
+            android:layout_toLeftOf="@+id/textViewGearRatio"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="/"
+            android:id="@+id/textView32"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_below="@+id/progressBarCvtTemp"
+            android:layout_toRightOf="@+id/textViewCvtTemp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=" G"
+            android:id="@+id/textView33"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_below="@+id/progressBarAccelerator"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="G Speed "
+            android:id="@+id/textView35"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_below="@+id/progressBarAccelerator"
+            android:layout_toLeftOf="@+id/textViewGSpeed"
+            android:layout_toStartOf="@+id/textViewCvtTempIndicator" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="0.58/0.62"
+            android:id="@+id/textViewPriPrsTestResult"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_above="@+id/progressBarPriPrs"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="min/avg"
+            android:id="@+id/textViewPriPrsTestTitle"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_above="@+id/textViewPriPrsTestResult"
+            android:layout_alignRight="@+id/textViewPriPrsTestResult"
+            android:layout_alignEnd="@+id/textViewPriPrsTestResult"
+            android:layout_marginBottom="-4dp"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

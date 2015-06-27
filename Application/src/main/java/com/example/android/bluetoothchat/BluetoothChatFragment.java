@@ -80,7 +80,7 @@ public class BluetoothChatFragment extends Fragment {
     private boolean m_bConnectionLost = false;
     private int m_iReconnectionDivider = 18;
     private int m_iAutoConnectAction = 0;
-    private DataMonitorAutostartTimer m_DataMonitorAutostartTimer;
+    private DataMonitorAutostartTimer m_DataMonitorAutostartTimer = null;
 
     /**
      * Name of the connected device
@@ -107,7 +107,7 @@ public class BluetoothChatFragment extends Fragment {
      */
     private BluetoothChatService mChatService = null;
 
-    private CVTDiag mCVTDiag;
+    private CVTDiag mCVTDiag = null;
     private boolean m_bDisableChatLogging = false;
 
     @Override
@@ -146,6 +146,10 @@ public class BluetoothChatFragment extends Fragment {
         if (mChatService != null) {
             mChatService.stop();
         }
+        if (null != mCVTDiag)
+            mCVTDiag.stop();
+        if (null != m_DataMonitorAutostartTimer)
+            m_DataMonitorAutostartTimer.stop();
     }
 
     @Override
@@ -239,6 +243,7 @@ public class BluetoothChatFragment extends Fragment {
                 }
                 // Start CVT Diag thread
                 if (null != mCVTDiag) {
+                    mCVTDiag.stop();
                     mCVTDiag = null;
                 }
                 mCVTDiag = new CVTDiag(mHandler, Constants.CVTDIAG_ACTION_READDTC);
@@ -259,6 +264,7 @@ public class BluetoothChatFragment extends Fragment {
                 }
                 // Start CVT Diag thread
                 if (null != mCVTDiag) {
+                    mCVTDiag.stop();
                     mCVTDiag = null;
                 }
                 mCVTDiag = new CVTDiag(mHandler, Constants.CVTDIAG_ACTION_READDETERIORATION);
@@ -279,6 +285,7 @@ public class BluetoothChatFragment extends Fragment {
                 }
                 // Start CVT Diag thread
                 if (null != mCVTDiag) {
+                    mCVTDiag.stop();
                     mCVTDiag = null;
                 }
                 mCVTDiag = new CVTDiag(mHandler, Constants.CVTDIAG_ACTION_READPARAMS);
@@ -613,7 +620,7 @@ public class BluetoothChatFragment extends Fragment {
     }
 
     private final class CVTDiagTimerTask extends TimerTask {
-        Timer m_tTimerIncomingBufferCheck;
+        Timer m_tTimerIncomingBufferCheck = null;
         Handler m_hMessageHandler;
 
         public CVTDiagTimerTask(Handler h) {
@@ -626,7 +633,8 @@ public class BluetoothChatFragment extends Fragment {
         }
 
         public void stop() {
-            m_tTimerIncomingBufferCheck.cancel();
+            if (null != m_tTimerIncomingBufferCheck)
+                m_tTimerIncomingBufferCheck.cancel();
         }
 
         @Override public void run() {
@@ -640,7 +648,7 @@ public class BluetoothChatFragment extends Fragment {
         String m_sWaitingForString;
         String m_sIncomingBuffer;
         boolean m_bIncomingBufferLock;
-        CVTDiagTimerTask m_CVTDiagTimerTask;
+        CVTDiagTimerTask m_CVTDiagTimerTask = null;
         String m_sAwdDataFromIncomingBuffer;
         String m_sEcuDataFromIncomingBuffer_CoolanTemp;
         String m_sEcuDataFromIncomingBuffer_InjPulse;
@@ -680,6 +688,11 @@ public class BluetoothChatFragment extends Fragment {
             m_iNextAction = Constants.CVTDIAG_NEXT_DTC_STEP1_ATZ;
             NextAction();
             m_CVTDiagTimerTask.start();
+        }
+
+        public void stop() {
+            if (null != m_CVTDiagTimerTask)
+                m_CVTDiagTimerTask.stop();
         }
 
         public void OBD_Message(String sObdMessage) {
@@ -1067,8 +1080,10 @@ public class BluetoothChatFragment extends Fragment {
         public String m_sTime;
         public String m_sDataLeverPosition;
         public String m_sDataVehicleSpeed;
+        public String m_sDataGSpeed;
         public String m_sDataEngSpeedSig;
         public String m_sDataAtfTemp;
+        public String m_sDataAtfTempCount;
         public String m_sDataGearRatio;
         public String m_sDataAccPedalOpen;
         public String m_sDataStmStep;
@@ -1078,6 +1093,8 @@ public class BluetoothChatFragment extends Fragment {
         public String m_sDataLuPrs;
         public String m_sDataLinePrs;
         public String m_sDataIsolT1;
+        public String m_sDataTrqRto;
+        public String m_sDataSlipRev;
         public String m_sAwdDataDump;
         int[] m_AwdDataArrayInt;
         public String m_sAwdDataEtsSolenoid;
@@ -1099,8 +1116,10 @@ public class BluetoothChatFragment extends Fragment {
         public int m_iEcuDtcFound;
         public int m_iCvtDtcCount;
         public int m_iDataVehicleSpeed;
+        public double m_dDataGSpeed;
         public int m_iDataEngSpeedSig;
         public int m_iDataAtfTemp;
+        public int m_iDataAtfTempCount;
         public double m_dDataGearRatio;
         public double m_dDataAccPedalOpen;
         public int m_iDataStmStep;
@@ -1110,6 +1129,9 @@ public class BluetoothChatFragment extends Fragment {
         public double m_dDataLuPrs;
         public double m_dDataLinePrs;
         public double m_dDataIsolT1;
+        public double m_dDataTrqRto;
+        public int m_iDataSlipRev;
+        public boolean m_bDataBrakeSw;
         public double m_dAwdDataEtsSolenoid;
         public int m_iEcuCoolanTemp;
         public double m_dEcuInstantConsumptionLiterPerHour;
@@ -1229,13 +1251,21 @@ public class BluetoothChatFragment extends Fragment {
             m_iDataVehicleSpeed = m_DataArrayInt[12];
             m_sDataVehicleSpeed = String.format("%d", m_DataArrayInt[12]);
 
+            // G SPEED (G) in 2_6 [19]
+            m_dDataGSpeed = ( (double)((m_DataArrayInt[19] > 127) ? (m_DataArrayInt[19] - 256) : m_DataArrayInt[19]) )/32;
+            m_sDataGSpeed = String.format("%.2f", m_dDataGSpeed);
+
             // ENG SPEED SIG (rpm) in 1_1 [7]
             m_iDataEngSpeedSig = m_DataArrayInt[7] * 32;
             m_sDataEngSpeedSig = String.format("%d", m_iDataEngSpeedSig);
 
             // ATF TEMPerature in 4_4 [31]
-            m_iDataAtfTemp = (int) ( ( (double)(m_DataArrayInt[31]+20) - (double)32) * (double)5 / (double)9 );
+            m_iDataAtfTemp = AtfTempCountToCelcius(m_DataArrayInt[31]);
             m_sDataAtfTemp = String.format("%d", m_iDataAtfTemp);
+
+            // ATF TEMP COUNT - raw value in 4_4 [31]
+            m_iDataAtfTempCount = m_DataArrayInt[31];
+            m_sDataAtfTempCount = String.format("%d", m_iDataAtfTempCount);
 
             // GEAR RATIO in 2_5 [18]
             m_dDataGearRatio = (double)(m_DataArrayInt[18]) / 100;
@@ -1271,13 +1301,25 @@ public class BluetoothChatFragment extends Fragment {
 
             // ISOLT1 (A) in 6_1,6_2 [42],[43]
             m_dDataIsolT1 = ( ( (double) (m_DataArrayInt[42]) ) * ( (double) 255 ) + ( (double) (m_DataArrayInt[43]) ) ) / 1000;
-            m_sDataIsolT1 = String.format("%.3f",m_dDataIsolT1);
+            m_sDataIsolT1 = String.format("%.2f",m_dDataIsolT1);
+
+            // TRQ RTO in 4_1 [28]
+            m_dDataTrqRto = ( (double) m_DataArrayInt[28]) / (double)64;
+            m_sDataTrqRto = String.format("%.2f", m_dDataTrqRto);
+
+            // SLIP REV in 2_4 [17]
+            m_iDataSlipRev = (m_DataArrayInt[17] > 127) ? (m_DataArrayInt[17] - 256) : m_DataArrayInt[17];
+            m_sDataSlipRev = String.format("%d", m_iDataSlipRev);
+
+            // BRAKE SW in 8_0 [55]
+            m_bDataBrakeSw = (8 == (8 & m_DataArrayInt[55]));
 
             // ETS SOLENOID (A) in AWD [0]
             m_dAwdDataEtsSolenoid = ( (double) (m_AwdDataArrayInt[0]) ) * 0.02;
             m_sAwdDataEtsSolenoid = String.format("%.2f",m_dAwdDataEtsSolenoid);
             int iAwdDataEtsSolenoidPercentage = (int) ( (m_dAwdDataEtsSolenoid / 1.8 ) * 50 );
-            m_sAwdDataEtsSolenoidRatio = String.format("%d%%–%d%%",100-iAwdDataEtsSolenoidPercentage, iAwdDataEtsSolenoidPercentage);
+            if (iAwdDataEtsSolenoidPercentage > 50) iAwdDataEtsSolenoidPercentage = 50;
+            m_sAwdDataEtsSolenoidRatio = String.format("%d%%:%d%%",100-iAwdDataEtsSolenoidPercentage, iAwdDataEtsSolenoidPercentage);
 
             // ECU
             m_iEcuCoolanTemp = m_EcuDataArrayInt[0] - 50;
@@ -1347,6 +1389,18 @@ public class BluetoothChatFragment extends Fragment {
                     sLogString += "CVT";
             }
             return sLogString;
+        }
+
+        private int AtfTempCountToCelcius(int iAtfTempCount) {
+            if (iAtfTempCount > 243) return 500;
+            int ReferenceTempCounts[] =  {  4,   8,  13, 17, 21, 27, 32, 39, 47, 55, 64, 73, 83, 93, 104, 114, 124, 134, 143, 152, 161, 169, 177, 183, 190, 196, 201, 206, 210, 214, 218, 221, 224, 227, 229, 231, 233, 235, 236, 238, 239, 241, 243};
+            int ReferenceTempCelcius[] = {-30, -20, -10, -5,  0,  5, 10, 15, 20, 25, 30, 35, 40, 45,  50,  55,  60,  65,  70,  75,  80,  85,  90,  95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 190, 200};
+            for (int i=0; i<= 41; i++) {
+                if (iAtfTempCount >= ReferenceTempCounts[i] && iAtfTempCount < ReferenceTempCounts[i+1]) {
+                    return ReferenceTempCelcius[i] + (ReferenceTempCelcius[i+1]-ReferenceTempCelcius[i]) * (iAtfTempCount-ReferenceTempCounts[i]) / (ReferenceTempCounts[i+1]-ReferenceTempCounts[i]) ;
+                }
+            }
+            return -50;
         }
     }
 }
