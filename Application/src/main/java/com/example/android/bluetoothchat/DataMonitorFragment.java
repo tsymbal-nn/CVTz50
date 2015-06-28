@@ -25,6 +25,7 @@ public class DataMonitorFragment extends Fragment {
     ProgressBar m_progressBarEngineTemp;
     ProgressBar m_progressBarCvtTemp;
     ProgressBar m_progressBarClutchLockup;
+    ProgressBar m_progressBarSlipRev;
     ProgressBar m_progressBarAwdCurrent;
     ProgressBar m_progressBarAccelerator;
     ProgressBar m_progressBarSecPrsTarget;
@@ -33,10 +34,10 @@ public class DataMonitorFragment extends Fragment {
     ProgressBar m_progressBarStepMotor;
     ProgressBar m_progressBarPriPrs;
     ProgressBar m_progressBarLinePrs;
-    ProgressBar m_progressBarConsumptionLH;
     ProgressBar m_progressBarConsumptionL100Km;
     TextView m_textViewRpm;
     TextView m_textViewEngineTemp;
+    TextView m_textViewEngineTempIndicator;
     TextView m_textViewCvtTemp;
     TextView m_textViewCvtTempCount;
     TextView m_textViewCvtTempIndicator;
@@ -44,6 +45,7 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewGSpeed;
     TextView m_textViewLeverPosition;
     TextView m_textViewClutchLockup;
+    TextView m_textViewClutchLockupIndicator;
     TextView m_textViewSlipRev;
     TextView m_textViewTorqueConverterRatio;
     TextView m_textViewAwdCurrent;
@@ -79,11 +81,11 @@ public class DataMonitorFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         m_progressBarRpm = (ProgressBar) view.findViewById(R.id.progressBarRpm);
         m_progressBarAccelerator = (ProgressBar) view.findViewById(R.id.progressBarAccelerator);
-        m_progressBarConsumptionLH = (ProgressBar) view.findViewById(R.id.progressBarConsumptionLH);
         m_progressBarConsumptionL100Km = (ProgressBar) view.findViewById(R.id.progressBarConsumptionL100Km);
         m_progressBarEngineTemp = (ProgressBar) view.findViewById(R.id.progressBarEngineTemp);
         m_progressBarCvtTemp = (ProgressBar) view.findViewById(R.id.progressBarCvtTemp);
         m_progressBarClutchLockup = (ProgressBar) view.findViewById(R.id.progressBarClutchLockup);
+        m_progressBarSlipRev = (ProgressBar) view.findViewById(R.id.progressBarSlipRev);
         m_progressBarAwdCurrent = (ProgressBar) view.findViewById(R.id.progressBarAwdCurrent);
         m_progressBarGearRatio = (ProgressBar) view.findViewById(R.id.progressBarGearRatio);
         m_progressBarStepMotor = (ProgressBar) view.findViewById(R.id.progressBarStepMotor);
@@ -99,10 +101,12 @@ public class DataMonitorFragment extends Fragment {
         m_textViewConsumptionLH = (TextView) view.findViewById(R.id.textViewConsumptionLH);
         m_textViewConsumptionL100Km = (TextView) view.findViewById(R.id.textViewConsumptionL100Km);
         m_textViewEngineTemp =  (TextView) view.findViewById(R.id.textViewEngineTemp);
+        m_textViewEngineTempIndicator =  (TextView) view.findViewById(R.id.textViewEngineTempIndicator);
         m_textViewCvtTemp = (TextView) view.findViewById(R.id.textViewCvtTemp);
         m_textViewCvtTempCount = (TextView) view.findViewById(R.id.textViewCvtTempCount);
         m_textViewCvtTempIndicator = (TextView) view.findViewById(R.id.textViewCvtTempIndicator);
         m_textViewClutchLockup = (TextView) view.findViewById(R.id.textViewClutchLockup);
+        m_textViewClutchLockupIndicator = (TextView) view.findViewById(R.id.textViewClutchLockupIndicator);
         m_textViewSlipRev = (TextView) view.findViewById(R.id.textViewSlipRev);
         m_textViewTorqueConverterRatio = (TextView) view.findViewById(R.id.textViewTorqueConverterRatio);
         m_textViewAwdCurrent = (TextView) view.findViewById(R.id.textViewAwdCurrent);
@@ -133,14 +137,27 @@ public class DataMonitorFragment extends Fragment {
         m_textViewAccelerator.setText(cvtDataDump.m_sDataAccPedalOpen);
 
         m_textViewConsumptionLH.setText(cvtDataDump.m_sEcuInstantConsumptionLiterPerHour);
-        m_progressBarConsumptionLH.setSecondaryProgress(m_progressBarConsumptionLH.getProgress());
-        m_progressBarConsumptionLH.setProgress((int) (100 * cvtDataDump.m_dEcuInstantConsumptionLiterPerHour / 30));
         m_progressBarConsumptionL100Km.setSecondaryProgress(m_progressBarConsumptionL100Km.getProgress());
         m_progressBarConsumptionL100Km.setProgress((int) (100 * cvtDataDump.m_dEcuInstantConsumptionLiterPer100Km / 30));
         m_textViewConsumptionL100Km.setText(cvtDataDump.m_sEcuInstantConsumptionLiterPer100Km);
 
-        if (-50 != cvtDataDump.m_iEcuCoolanTemp) m_textViewEngineTemp.setText(cvtDataDump.m_sEcuCoolanTemp + "°C");
-        else m_textViewEngineTemp.setText("∞");
+        if (-50 != cvtDataDump.m_iEcuCoolanTemp && -40 != cvtDataDump.m_iEcuCoolanTemp) {
+            m_textViewEngineTemp.setText(cvtDataDump.m_sEcuCoolanTemp + "°C");
+            String sEngineTempIndicatorString;
+            String sEngineTempIndicatorColor;
+            if (cvtDataDump.m_iEcuCoolanTemp < 20) { sEngineTempIndicatorString = "COLD"; sEngineTempIndicatorColor = "#FF20A0E0"; }
+            else if (cvtDataDump.m_iEcuCoolanTemp < 80) { sEngineTempIndicatorString = "WARM"; sEngineTempIndicatorColor = "#FF00C0C0"; }
+            else if (cvtDataDump.m_iEcuCoolanTemp < 100) { sEngineTempIndicatorString = "OK"; sEngineTempIndicatorColor = "#FF00AA00"; }
+            else if (cvtDataDump.m_iEcuCoolanTemp < 120) { sEngineTempIndicatorString = "HOT"; sEngineTempIndicatorColor = "#FFFF8000"; }
+            else { sEngineTempIndicatorString = "HOTTER"; sEngineTempIndicatorColor = "#FFFF0000"; }
+            m_textViewCvtTempIndicator.setText(sEngineTempIndicatorString);
+            m_textViewCvtTempIndicator.setBackgroundColor(Color.parseColor(sEngineTempIndicatorColor));
+            m_textViewEngineTempIndicator.setVisibility(View.VISIBLE);
+        }
+        else {
+            m_textViewEngineTemp.setText("∞");
+            m_textViewEngineTempIndicator.setVisibility(View.INVISIBLE);
+        }
         m_progressBarEngineTemp.setSecondaryProgress(m_progressBarEngineTemp.getProgress());
         m_progressBarEngineTemp.setProgress((int) (100 * (cvtDataDump.m_iEcuCoolanTemp + 20) / (120 + 20)));
         m_progressBarCvtTemp.setSecondaryProgress(m_progressBarCvtTemp.getProgress());
@@ -158,9 +175,13 @@ public class DataMonitorFragment extends Fragment {
         m_textViewCvtTempIndicator.setText(sCvtTempIndicatorString);
         m_textViewCvtTempIndicator.setBackgroundColor(Color.parseColor(sCvtTempIndicatorColor));
 
-        m_textViewClutchLockup.setText(cvtDataDump.m_sDataIsolT1+"A");
+        m_textViewClutchLockup.setText(cvtDataDump.m_sDataIsolT1 + "A");
+        if (cvtDataDump.m_dDataIsolT1 > 0.1 && Math.abs(cvtDataDump.m_iDataSlipRev) < 10 && cvtDataDump.m_dDataTrqRto < 1.01) m_textViewClutchLockupIndicator.setVisibility(View.VISIBLE);
+        else m_textViewClutchLockupIndicator.setVisibility(View.INVISIBLE);
         m_progressBarClutchLockup.setSecondaryProgress(m_progressBarClutchLockup.getProgress());
         m_progressBarClutchLockup.setProgress((int) (100 * cvtDataDump.m_dDataIsolT1 / 0.7));
+        m_progressBarSlipRev.setSecondaryProgress(m_progressBarSlipRev.getProgress());
+        m_progressBarSlipRev.setProgress((int) (100 * Math.abs(cvtDataDump.m_iDataSlipRev) / 127));
         m_textViewSlipRev.setText(cvtDataDump.m_sDataSlipRev + ( (127 == cvtDataDump.m_iDataSlipRev || -127 == cvtDataDump.m_iDataSlipRev) ? "+" : "" ) );
         m_textViewTorqueConverterRatio.setText(cvtDataDump.m_sDataTrqRto);
 
