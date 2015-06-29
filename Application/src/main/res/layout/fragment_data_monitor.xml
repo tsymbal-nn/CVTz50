@@ -561,9 +561,8 @@
             android:editable="false"
             android:enabled="true"
             android:textStyle="bold"
-            android:layout_below="@+id/progressBarAccelerator"
-            android:layout_toLeftOf="@+id/textView33"
-            android:layout_toStartOf="@+id/textView20" />
+            android:layout_below="@+id/progressBarStepMotor"
+            android:layout_toLeftOf="@+id/textView33" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -797,19 +796,19 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:textColor="#FFBBBBBB"
-            android:layout_marginTop="-6dp" />
+            android:layout_marginTop="-7dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="8"
+            android:text="8,0"
             android:id="@+id/textView20"
             android:textColor="#FFBBBBBB"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/progressBarAccelerator"
-            android:layout_marginTop="-8dp" />
+            android:layout_marginTop="-9dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -833,7 +832,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/progressBarEngineTemp"
-            android:layout_marginTop="-2dp" />
+            android:layout_marginTop="-3dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -882,7 +881,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/progressBarStepMotor"
-            android:layout_marginTop="-5dp" />
+            android:layout_marginTop="-6dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -976,9 +975,9 @@
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_below="@+id/progressBarAccelerator"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/textViewGSpeed" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -990,9 +989,9 @@
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_below="@+id/progressBarAccelerator"
             android:layout_toLeftOf="@+id/textViewGSpeed"
-            android:layout_toStartOf="@+id/textViewCvtTempIndicator" />
+            android:layout_toStartOf="@+id/textViewCvtTempIndicator"
+            android:layout_alignTop="@+id/textViewGSpeed" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -1080,9 +1079,9 @@
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_below="@+id/progressBarStepMotor"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/textViewEngineTorque" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -1094,23 +1093,22 @@
             android:editable="false"
             android:enabled="true"
             android:textStyle="bold"
-            android:layout_below="@+id/progressBarStepMotor"
-            android:layout_toLeftOf="@+id/textView36"
-            android:layout_toStartOf="@+id/textView23" />
+            android:layout_below="@+id/progressBarAccelerator"
+            android:layout_toLeftOf="@+id/textView36" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Eng Trq "
+            android:text="Torque "
             android:id="@+id/textView38"
             android:elegantTextHeight="false"
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_below="@+id/progressBarStepMotor"
             android:layout_toLeftOf="@+id/textViewEngineTorque"
-            android:layout_toStartOf="@+id/textViewEngineTorque" />
+            android:layout_toStartOf="@+id/textViewEngineTorque"
+            android:layout_alignTop="@+id/textViewEngineTorque" />
 
     </RelativeLayout>
 
