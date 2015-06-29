@@ -542,7 +542,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="76"
+            android:text="176"
             android:id="@+id/textViewSpeed"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -702,7 +702,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" Step Motor STM STEP"
+            android:text=" STM STEP"
             android:id="@+id/textView14"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -863,7 +863,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="6"
+            android:text="6th gear"
             android:id="@+id/textView25"
             android:textColor="#FFBBBBBB"
             android:layout_alignParentRight="true"
@@ -875,7 +875,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="190"
+            android:text="190step"
             android:id="@+id/textView26"
             android:textColor="#FFBBBBBB"
             android:layout_below="@+id/progressBarGearRatio"
@@ -1069,6 +1069,48 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=" N·m"
+            android:id="@+id/textView36"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_below="@+id/progressBarStepMotor"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="333.5"
+            android:id="@+id/textViewEngineTorque"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textStyle="bold"
+            android:layout_below="@+id/progressBarStepMotor"
+            android:layout_toLeftOf="@+id/textView36"
+            android:layout_toStartOf="@+id/textView23" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Eng Trq "
+            android:id="@+id/textView38"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_below="@+id/progressBarStepMotor"
+            android:layout_toLeftOf="@+id/textViewEngineTorque"
+            android:layout_toStartOf="@+id/textViewEngineTorque" />
 
     </RelativeLayout>
 

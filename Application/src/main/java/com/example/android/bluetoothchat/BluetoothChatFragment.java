@@ -1087,6 +1087,7 @@ public class BluetoothChatFragment extends Fragment {
         public String m_sDataGearRatio;
         public String m_sDataAccPedalOpen;
         public String m_sDataStmStep;
+        public String m_sDataEngineTorque;
         public String m_sDataPriPress;
         public String m_sDataSecPress;
         public String m_sDataTgtSecPrs;
@@ -1123,6 +1124,7 @@ public class BluetoothChatFragment extends Fragment {
         public double m_dDataGearRatio;
         public double m_dDataAccPedalOpen;
         public int m_iDataStmStep;
+        public double m_dDataEngineTorque;
         public double m_dDataPriPress;
         public double m_dDataSecPress;
         public double m_dDataTgtSecPrs;
@@ -1278,6 +1280,10 @@ public class BluetoothChatFragment extends Fragment {
             // STM STEP (step) in 5_1 [35]
             m_iDataStmStep = m_DataArrayInt[35] - 30;
             m_sDataStmStep = String.format("%d", m_iDataStmStep);
+
+            // Engine Torque (N*m) in 3_6 [26]
+            m_dDataEngineTorque = (double) (m_DataArrayInt[26]) * 6.4;
+            m_sDataEngineTorque = String.format("%.1f", m_dDataEngineTorque);
 
             // PRI PRESS (MPa) in 4_3 [30]
             m_dDataPriPress = ( (double) (m_DataArrayInt[30]) ) * 0.025;

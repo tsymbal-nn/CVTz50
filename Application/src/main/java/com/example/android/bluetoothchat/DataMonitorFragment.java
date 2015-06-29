@@ -55,6 +55,7 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewVirtualGear;
     TextView m_textViewGearRatio;
     TextView m_textViewStepMotor;
+    TextView m_textViewEngineTorque;
     TextView m_textViewPriPrs;
     TextView m_textViewPriPrsTestTitle;
     TextView m_textViewPriPrsTestResult;
@@ -114,6 +115,7 @@ public class DataMonitorFragment extends Fragment {
         m_textViewVirtualGear = (TextView) view.findViewById(R.id.textViewVirtualGear);
         m_textViewGearRatio = (TextView) view.findViewById(R.id.textViewGearRatio);
         m_textViewStepMotor = (TextView) view.findViewById(R.id.textViewStepMotor);
+        m_textViewEngineTorque = (TextView) view.findViewById(R.id.textViewEngineTorque);
         m_textViewSecPrsTarget = (TextView) view.findViewById(R.id.textViewSecPrsTarget);
         m_textViewSecPrs = (TextView) view.findViewById(R.id.textViewSecPrs);
         m_textViewPriPrs = (TextView) view.findViewById(R.id.textViewPriPrs);
@@ -150,8 +152,8 @@ public class DataMonitorFragment extends Fragment {
             else if (cvtDataDump.m_iEcuCoolanTemp < 100) { sEngineTempIndicatorString = "OK"; sEngineTempIndicatorColor = "#FF00AA00"; }
             else if (cvtDataDump.m_iEcuCoolanTemp < 120) { sEngineTempIndicatorString = "HOT"; sEngineTempIndicatorColor = "#FFFF8000"; }
             else { sEngineTempIndicatorString = "HOTTER"; sEngineTempIndicatorColor = "#FFFF0000"; }
-            m_textViewCvtTempIndicator.setText(sEngineTempIndicatorString);
-            m_textViewCvtTempIndicator.setBackgroundColor(Color.parseColor(sEngineTempIndicatorColor));
+            m_textViewEngineTempIndicator.setText(sEngineTempIndicatorString);
+            m_textViewEngineTempIndicator.setBackgroundColor(Color.parseColor(sEngineTempIndicatorColor));
             m_textViewEngineTempIndicator.setVisibility(View.VISIBLE);
         }
         else {
@@ -205,6 +207,7 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarStepMotor.setSecondaryProgress(m_progressBarStepMotor.getProgress());
         m_progressBarStepMotor.setProgress((int) (100 * (cvtDataDump.m_iDataStmStep + 20) / (190 + 20)));
         m_textViewStepMotor.setText(cvtDataDump.m_sDataStmStep);
+        m_textViewEngineTorque.setText(cvtDataDump.m_sDataEngineTorque);
 
         m_textViewSecPrsTarget.setText(cvtDataDump.m_sDataTgtSecPrs);
         m_progressBarSecPrsTarget.setSecondaryProgress(m_progressBarSecPrsTarget.getProgress());
