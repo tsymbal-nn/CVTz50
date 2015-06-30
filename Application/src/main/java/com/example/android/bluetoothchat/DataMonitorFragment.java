@@ -55,7 +55,9 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewVirtualGear;
     TextView m_textViewGearRatio;
     TextView m_textViewStepMotor;
+    TextView m_textViewFinalTorque;
     TextView m_textViewEngineTorque;
+    TextView m_textViewEngineHorsePower;
     TextView m_textViewPriPrs;
     TextView m_textViewPriPrsTestTitle;
     TextView m_textViewPriPrsTestResult;
@@ -115,7 +117,9 @@ public class DataMonitorFragment extends Fragment {
         m_textViewVirtualGear = (TextView) view.findViewById(R.id.textViewVirtualGear);
         m_textViewGearRatio = (TextView) view.findViewById(R.id.textViewGearRatio);
         m_textViewStepMotor = (TextView) view.findViewById(R.id.textViewStepMotor);
+        m_textViewFinalTorque = (TextView) view.findViewById(R.id.textViewFinalTorque);
         m_textViewEngineTorque = (TextView) view.findViewById(R.id.textViewEngineTorque);
+        m_textViewEngineHorsePower = (TextView) view.findViewById(R.id.textViewEngineHorsePower);
         m_textViewSecPrsTarget = (TextView) view.findViewById(R.id.textViewSecPrsTarget);
         m_textViewSecPrs = (TextView) view.findViewById(R.id.textViewSecPrs);
         m_textViewPriPrs = (TextView) view.findViewById(R.id.textViewPriPrs);
@@ -207,7 +211,13 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarStepMotor.setSecondaryProgress(m_progressBarStepMotor.getProgress());
         m_progressBarStepMotor.setProgress((int) (100 * (cvtDataDump.m_iDataStmStep + 20) / (190 + 20)));
         m_textViewStepMotor.setText(cvtDataDump.m_sDataStmStep);
+        double dEffectiveGearRatio;
+        if (cvtDataDump.m_sDataLeverPosition.contentEquals("D")) dEffectiveGearRatio = cvtDataDump.m_dDataGearRatio;
+        else if (cvtDataDump.m_sDataLeverPosition.contentEquals("R")) dEffectiveGearRatio = 1.766;
+        else dEffectiveGearRatio = 0;
+        m_textViewFinalTorque.setText(String.format("%d", Math.round(cvtDataDump.m_dDataEngineTorque * cvtDataDump.m_dDataTrqRto * dEffectiveGearRatio * 5.173)));
         m_textViewEngineTorque.setText(cvtDataDump.m_sDataEngineTorque);
+        m_textViewEngineHorsePower.setText(String.format("%d", Math.round(1.3596 * cvtDataDump.m_dDataEngineTorque * (double) cvtDataDump.m_iDataEngSpeedSig / 9549)));
 
         m_textViewSecPrsTarget.setText(cvtDataDump.m_sDataTgtSecPrs);
         m_progressBarSecPrsTarget.setSecondaryProgress(m_progressBarSecPrsTarget.getProgress());

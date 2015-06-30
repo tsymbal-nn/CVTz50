@@ -561,8 +561,8 @@
             android:editable="false"
             android:enabled="true"
             android:textStyle="bold"
-            android:layout_below="@+id/progressBarStepMotor"
-            android:layout_toLeftOf="@+id/textView33" />
+            android:layout_above="@+id/progressBarAwdCurrent"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -649,7 +649,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="F "
+            android:text="F"
             android:id="@+id/textView10"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -662,7 +662,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" R"
+            android:text="R"
             android:id="@+id/textView11"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -969,29 +969,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" G"
+            android:text="g"
             android:id="@+id/textView33"
             android:elegantTextHeight="false"
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/textViewGSpeed" />
+            android:layout_alignParentEnd="false"
+            android:layout_toRightOf="@+id/textViewGSpeed"
+            android:layout_alignBottom="@+id/textViewGSpeed" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="G Speed "
+            android:text="Final Trq "
             android:id="@+id/textView35"
             android:elegantTextHeight="false"
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_toLeftOf="@+id/textViewGSpeed"
-            android:layout_toStartOf="@+id/textViewCvtTempIndicator"
-            android:layout_alignTop="@+id/textViewGSpeed" />
+            android:layout_toLeftOf="@+id/textViewFinalTorque"
+            android:layout_alignTop="@+id/textViewFinalTorque" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -1006,7 +1005,6 @@
             android:layout_above="@+id/progressBarPriPrs"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:visibility="invisible"
             android:textStyle="bold" />
 
         <TextView
@@ -1021,9 +1019,7 @@
             android:textColor="#FF444444"
             android:layout_above="@+id/textViewPriPrsTestResult"
             android:layout_alignRight="@+id/textViewPriPrsTestResult"
-            android:layout_alignEnd="@+id/textViewPriPrsTestResult"
-            android:layout_marginBottom="-4dp"
-            android:visibility="invisible" />
+            android:layout_marginBottom="-5dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -1100,15 +1096,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Torque "
+            android:text=" Hp "
             android:id="@+id/textView38"
             android:elegantTextHeight="false"
             android:editable="false"
             android:enabled="true"
             android:textColor="#FF444444"
-            android:layout_toLeftOf="@+id/textViewEngineTorque"
-            android:layout_toStartOf="@+id/textViewEngineTorque"
-            android:layout_alignTop="@+id/textViewEngineTorque" />
+            android:layout_alignTop="@+id/textViewEngineTorque"
+            android:layout_toRightOf="@+id/textViewEngineHorsePower" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="234"
+            android:id="@+id/textViewEngineHorsePower"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textStyle="bold"
+            android:layout_alignTop="@+id/textViewEngineTorque"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=" N·m"
+            android:id="@+id/textView37"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textColor="#FF444444"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/textViewFinalTorque" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="2345"
+            android:id="@+id/textViewFinalTorque"
+            android:elegantTextHeight="false"
+            android:editable="false"
+            android:enabled="true"
+            android:textStyle="bold"
+            android:layout_below="@+id/progressBarStepMotor"
+            android:layout_toLeftOf="@+id/textView37"
+            android:layout_toStartOf="@+id/textView23" />
 
     </RelativeLayout>
 

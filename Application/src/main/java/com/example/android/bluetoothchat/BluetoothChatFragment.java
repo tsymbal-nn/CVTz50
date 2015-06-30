@@ -1282,7 +1282,7 @@ public class BluetoothChatFragment extends Fragment {
             m_sDataStmStep = String.format("%d", m_iDataStmStep);
 
             // Engine Torque (N*m) in 3_6 [26]
-            m_dDataEngineTorque = (double) (m_DataArrayInt[26]) * 6.4;
+            m_dDataEngineTorque = (double) ((m_DataArrayInt[26] > 127) ? (m_DataArrayInt[26] - 256) : m_DataArrayInt[26]) * 6.4;
             m_sDataEngineTorque = String.format("%.1f", m_dDataEngineTorque);
 
             // PRI PRESS (MPa) in 4_3 [30]
