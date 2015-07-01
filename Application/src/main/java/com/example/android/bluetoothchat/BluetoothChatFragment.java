@@ -301,6 +301,8 @@ public class BluetoothChatFragment extends Fragment {
 
         m_DataMonitorAutostartTimer = new DataMonitorAutostartTimer(mHandler);
         m_DataMonitorAutostartTimer.start();
+
+        mConversationArrayAdapter.add("Data Monitor will be started in 10 seconds. Press any button to cancel.");
     }
 
     /**

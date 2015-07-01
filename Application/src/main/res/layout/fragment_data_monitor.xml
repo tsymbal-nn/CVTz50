@@ -996,7 +996,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="0.58/0.62"
+            android:text="0.99/0.98"
             android:id="@+id/textViewPriPrsTestResult"
             android:elegantTextHeight="false"
             android:editable="false"
@@ -1005,7 +1005,8 @@
             android:layout_above="@+id/progressBarPriPrs"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="invisible" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -1019,7 +1020,8 @@
             android:textColor="#FF444444"
             android:layout_above="@+id/textViewPriPrsTestResult"
             android:layout_alignRight="@+id/textViewPriPrsTestResult"
-            android:layout_marginBottom="-5dp" />
+            android:layout_marginBottom="-5dp"
+            android:visibility="invisible" />
 
         <TextView
             android:layout_width="wrap_content"
