@@ -24,6 +24,7 @@
     <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="title_not_connected">not connected</string>
     <string name="cvt_diag">Read CVT DTC</string>
+    <string name="ecu_diag">Read ECU DTC</string>
     <string name="cvt_deterioration">Read CVTF DETERIORATION</string>
     <string name="cvt_params">Start CVT Data Monitor</string>
 

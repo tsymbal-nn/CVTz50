@@ -38,6 +38,7 @@ public interface Constants {
     public static final int CVTDIAG_ACTION_READDTC = 1;
     public static final int CVTDIAG_ACTION_READDETERIORATION = 2;
     public static final int CVTDIAG_ACTION_READPARAMS = 3;
+    public static final int CVTDIAG_ACTION_READECUDTC = 4;
     // CVT Diag next ation IDs
     public static final int CVTDIAG_NEXT_DTC_STEP1_ATZ = 10;
     public static final int CVTDIAG_NEXT_DTC_STEP1A_ATE0 = 11;

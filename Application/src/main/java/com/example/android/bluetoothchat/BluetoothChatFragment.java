@@ -72,6 +72,7 @@ public class BluetoothChatFragment extends Fragment {
     private ListView mConversationView;
     private EditText mOutEditText;
     private Button mSendButton;
+    private Button mECUDiagButton;
     private Button mCVTDiagButton;
     private Button mCVTDeteriorationButton;
     private Button mCVTParamsButton;
@@ -179,6 +180,7 @@ public class BluetoothChatFragment extends Fragment {
         mConversationView = (ListView) view.findViewById(R.id.in);
         mOutEditText = (EditText) view.findViewById(R.id.edit_text_out);
         mSendButton = (Button) view.findViewById(R.id.button_send);
+        mECUDiagButton = (Button) view.findViewById(R.id.button_ecudiag);
         mCVTDiagButton = (Button) view.findViewById(R.id.button_cvtdiag);
         mCVTDeteriorationButton = (Button) view.findViewById(R.id.button_cvtdeterioration);
         mCVTParamsButton = (Button) view.findViewById(R.id.button_cvtparams);
@@ -232,6 +234,27 @@ public class BluetoothChatFragment extends Fragment {
         });
 
         // Initialize the CVT Diag button with a listener that for click events
+        mECUDiagButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                m_DataMonitorAutostartTimer.stop();
+                if (mChatService.getState() != BluetoothChatService.STATE_CONNECTED) {
+                    Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+                    startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+                    m_iAutoConnectAction = Constants.CVTDIAG_ACTION_READECUDTC;
+                    return;
+                }
+                // Start CVT Diag thread
+                if (null != mCVTDiag) {
+                    mCVTDiag.stop();
+                    mCVTDiag = null;
+                }
+                mCVTDiag = new CVTDiag(mHandler, Constants.CVTDIAG_ACTION_READECUDTC);
+                mCVTDiag.start();
+                m_bConnectedToReconnectOnLost = false;
+            }
+        });
+
+        // Initialize the ECU Diag button with a listener that for click events
         mCVTDiagButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 m_DataMonitorAutostartTimer.stop();
@@ -303,18 +326,6 @@ public class BluetoothChatFragment extends Fragment {
         m_DataMonitorAutostartTimer.start();
 
         mConversationArrayAdapter.add("Data Monitor will be started in 10 seconds. Press any button to cancel.");
-    }
-
-    /**
-     * Makes this device discoverable.
-     */
-    private void ensureDiscoverable() {
-        if (mBluetoothAdapter.getScanMode() !=
-                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
     }
 
     /**
@@ -413,6 +424,7 @@ public class BluetoothChatFragment extends Fragment {
                                 int iAction = m_iAutoConnectAction;
                                 m_iAutoConnectAction = 0;
                                 if (Constants.CVTDIAG_ACTION_READDTC == iAction) mCVTDiagButton.performClick();
+                                else if (Constants.CVTDIAG_ACTION_READECUDTC == iAction) mECUDiagButton.performClick();
                                 else if (Constants.CVTDIAG_ACTION_READDETERIORATION == iAction) mCVTDeteriorationButton.performClick();
                                 else if (Constants.CVTDIAG_ACTION_READPARAMS == iAction) mCVTParamsButton.performClick();
                             }
@@ -754,7 +766,10 @@ public class BluetoothChatFragment extends Fragment {
                 case Constants.CVTDIAG_NEXT_DTC_STEP4_ATSW00: {
                     sendMessage(" ATSW00\r");
                     m_sWaitingForString = ">";
-                    m_iNextAction = Constants.CVTDIAG_NEXT_DTC_STEP5_ATSP6;
+                    if (Constants.CVTDIAG_ACTION_READECUDTC ==  m_iGlobalAction)
+                        m_iNextAction = Constants.CVTDIAG_NEXT_READECU_STEP5_ATSP5;
+                    else
+                        m_iNextAction = Constants.CVTDIAG_NEXT_DTC_STEP5_ATSP6;
                     break;
                 }
                 case Constants.CVTDIAG_NEXT_DTC_STEP5_ATSP6: {
@@ -1026,8 +1041,53 @@ public class BluetoothChatFragment extends Fragment {
                         BluetoothChatFragment.WriteCvtLog(Constants.CVTDIAG_LOGFILE_GENERAL, "ECU DTC RESULT: " + sIncomingBufferLocalCopy);
                     }
                     m_sEcuDataFromIncomingBuffer_DTC = sIncomingBufferLocalCopy;
-                    m_iNextAction = Constants.CVTDIAG_NEXT_READAWD_STEP5A_ATSP6; //Continue with reading of AWD data
-                    NextAction();
+
+                    if (Constants.CVTDIAG_ACTION_READECUDTC ==  m_iGlobalAction) { // Perform full ECU DTC parsing only if it is single ECU DTC reading action
+                        sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.replaceAll("[^0-9A-F:]", ""); // remove all non HEX number symbols so now we will have reply with no any spaces
+                        if(sIncomingBufferLocalCopy.substring(0,1).equals(":")) sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.substring(1); // Remove ":" remaining from BUS INIT: OK
+                        if ( sIncomingBufferLocalCopy.length()>=4 && sIncomingBufferLocalCopy.substring(0,4).equals("E300") ) {
+                            if (!m_bDisableChatLogging) {
+                                mConversationArrayAdapter.add(" ");
+                                mConversationArrayAdapter.add("OK: NO ECU DTC");
+                            }
+                        }
+                        else {
+                            if (sIncomingBufferLocalCopy.length()>=5 && sIncomingBufferLocalCopy.substring(4,5).contains(":")) { // Reply format: 00B    0: E3 03 07 25 40 08    1: 26 40 17 01 40 00 00
+                                sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.substring(3);
+                                sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.replaceAll(".:", ""); // only first ~32 errors will be processed correctly
+                            }
+                            // now we should have bytestream starting with E3
+                            if (sIncomingBufferLocalCopy.length()>=4 && sIncomingBufferLocalCopy.substring(0,2).equals("E3")) {
+                                sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.substring(2);
+                                int iEcuDtcCount;
+                                iEcuDtcCount = Integer.parseInt(sIncomingBufferLocalCopy.substring(0, 2), 16);
+                                sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.substring(2);
+                                String sDtcList;
+                                sDtcList = "";
+                                while (sIncomingBufferLocalCopy.length() >= 4) {
+                                    sDtcList += sIncomingBufferLocalCopy.substring(0, 4) + " ";
+                                    sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.substring(4);
+                                    if (sIncomingBufferLocalCopy.length() >= 2)
+                                        sIncomingBufferLocalCopy = sIncomingBufferLocalCopy.substring(2); //remove delimiter (delimiter is 40 but doesn't matter)
+                                }
+                                sDtcList = sDtcList.replaceAll("0000", "");
+                                sDtcList = sDtcList.replaceAll("D000", "U1000");
+                                sIncomingBufferLocalCopy = String.format("%d ECU DTC DETECTED: ", iEcuDtcCount);
+                                sIncomingBufferLocalCopy += sDtcList;
+                                if (!m_bDisableChatLogging) {
+                                    mConversationArrayAdapter.add(" ");
+                                    mConversationArrayAdapter.add(sIncomingBufferLocalCopy);
+                                    mConversationArrayAdapter.add("To clear (reset) ECU DTC: \r\n1. click [Send] button \r\n2. enter 14A1 into the field below \r\n3. click [Read ECU DTC] button again \r\n4. click [Send] button immediately after this message shown again");
+                                }
+                            }
+                        }
+                        m_CVTDiagTimerTask.stop();
+                        m_iNextAction = 0;
+                    }
+                    else {
+                        m_iNextAction = Constants.CVTDIAG_NEXT_READAWD_STEP5A_ATSP6; //Continue with reading of AWD data
+                        NextAction();
+                    }
                     break;
                 }
                 case Constants.CVTDIAG_NEXT_READAWD_STEP5A_ATSP6: { // need to switch from atsp5 to atsp6 and back to avoid problem of switching between different systems

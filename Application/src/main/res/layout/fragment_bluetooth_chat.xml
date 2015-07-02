@@ -31,6 +31,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/ecu_diag"
+        android:id="@+id/button_ecudiag"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/cvt_deterioration"
         android:layout_gravity="center_horizontal"
         android:id="@+id/button_cvtdeterioration" />

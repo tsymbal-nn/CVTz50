@@ -259,7 +259,7 @@ public class DataMonitorFragment extends Fragment {
             if (cvtDataDump.m_dDataPriPress < m_dDiagnosticPriPrsTestMinimum) m_dDiagnosticPriPrsTestMinimum = cvtDataDump.m_dDataPriPress;
             m_dDiagnosticPriPrsTestAverage = ((m_dDiagnosticPriPrsTestAverage * m_dDiagnosticPriPrsTestPointsCount) + cvtDataDump.m_dDataPriPress) / ++m_dDiagnosticPriPrsTestPointsCount;
             m_textViewPriPrsTestResult.setText(String.format("%.2f", m_dDiagnosticPriPrsTestMinimum) + "/" + String.format("%.2f", m_dDiagnosticPriPrsTestAverage));
-            if (m_dDiagnosticPriPrsTestMinimum < 0.4) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF0000"));
+            if (m_dDiagnosticPriPrsTestMinimum < 0.3) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF0000"));
             else if (m_dDiagnosticPriPrsTestMinimum < 0.5) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF8000"));
         }
     }
