@@ -1360,7 +1360,7 @@ public class BluetoothChatFragment extends Fragment {
             m_sDataTgtSecPrs = String.format("%.2f", m_dDataTgtSecPrs);
 
             // LU PRS (MPa) in 5_2 [36]
-            m_dDataLuPrs = ( (double) (m_DataArrayInt[36]) ) * 0.025;
+            m_dDataLuPrs = ( (double) ((m_DataArrayInt[36] > 127) ? (m_DataArrayInt[36] - 256) : m_DataArrayInt[36]) ) * 0.01;
             m_sDataLuPrs = String.format("%.2f", m_dDataLuPrs);
 
             // LINE PRS (MPa) in 5_3 [37]
