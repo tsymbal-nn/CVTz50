@@ -62,14 +62,21 @@ public class DataMonitorFragment extends Fragment {
     TextView m_textViewPriPrsTestTitle;
     TextView m_textViewPriPrsTestResult;
     TextView m_textViewLinePrs;
+    TextView m_textViewLuPrs;
     TextView m_textViewAwdRatio;
     TextView m_textViewConsumptionLH;
     TextView m_textViewConsumptionL100Km;
+    TextView m_textViewConsumptionL100KmAverage;
+    TextView m_textViewConsumptionTotalLiters;
+    TextView m_textViewConsumptionTotalDistance;
     TextView m_textViewDtc;
     TextView m_textViewDeterioration;
     double m_dDiagnosticPriPrsTestAverage = 0;
     double m_dDiagnosticPriPrsTestMinimum = 0;
     int m_dDiagnosticPriPrsTestPointsCount = 0;
+    double m_dAverageConsumptionTotalDistance = 0;
+    double m_dAverageConsumptionTotalLiters = 0;
+    BluetoothChatFragment.CvtDataDump m_cvtDataDumpPrevious = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +110,9 @@ public class DataMonitorFragment extends Fragment {
         m_textViewAccelerator = (TextView) view.findViewById(R.id.textViewAccelerator);
         m_textViewConsumptionLH = (TextView) view.findViewById(R.id.textViewConsumptionLH);
         m_textViewConsumptionL100Km = (TextView) view.findViewById(R.id.textViewConsumptionL100Km);
+        m_textViewConsumptionL100KmAverage = (TextView) view.findViewById(R.id.textViewConsumptionL100KmAverage);
+        m_textViewConsumptionTotalLiters = (TextView) view.findViewById(R.id.textViewConsumptionTotalLiters);
+        m_textViewConsumptionTotalDistance = (TextView) view.findViewById(R.id.textViewConsumptionTotalDistance);
         m_textViewEngineTemp =  (TextView) view.findViewById(R.id.textViewEngineTemp);
         m_textViewEngineTempIndicator =  (TextView) view.findViewById(R.id.textViewEngineTempIndicator);
         m_textViewCvtTemp = (TextView) view.findViewById(R.id.textViewCvtTemp);
@@ -126,8 +136,10 @@ public class DataMonitorFragment extends Fragment {
         m_textViewPriPrsTestTitle = (TextView) view.findViewById(R.id.textViewPriPrsTestTitle);
         m_textViewPriPrsTestResult = (TextView) view.findViewById(R.id.textViewPriPrsTestResult);
         m_textViewLinePrs = (TextView) view.findViewById(R.id.textViewLinePrs);
+        m_textViewLuPrs = (TextView) view.findViewById(R.id.textViewLuPrs);
         m_textViewDtc = (TextView) view.findViewById(R.id.textViewDtc);
         m_textViewDeterioration = (TextView) view.findViewById(R.id.textViewDeterioration);
+        m_cvtDataDumpPrevious = null;
     }
 
     public void setData(BluetoothChatFragment.CvtDataDump cvtDataDump) {
@@ -146,6 +158,17 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarConsumptionL100Km.setSecondaryProgress(m_progressBarConsumptionL100Km.getProgress());
         m_progressBarConsumptionL100Km.setProgress((int) (100 * cvtDataDump.m_dEcuInstantConsumptionLiterPer100Km / 30));
         m_textViewConsumptionL100Km.setText(cvtDataDump.m_sEcuInstantConsumptionLiterPer100Km);
+        if ( null != m_cvtDataDumpPrevious && (cvtDataDump.m_iEcuVehicleSpeed > 0 || cvtDataDump.m_dEcuInstantConsumptionLiterPerHour > 0.001) ) {
+            double dPeriodHours = (double)(cvtDataDump.m_tTime.toMillis(true) - m_cvtDataDumpPrevious.m_tTime.toMillis(true)) / (1000.0 * 3600.0);
+            m_dAverageConsumptionTotalDistance += dPeriodHours * (double)(cvtDataDump.m_iEcuVehicleSpeed + m_cvtDataDumpPrevious.m_iEcuVehicleSpeed) / 2.0;
+            m_dAverageConsumptionTotalLiters += dPeriodHours * (cvtDataDump.m_dEcuInstantConsumptionLiterPerHour + m_cvtDataDumpPrevious.m_dEcuInstantConsumptionLiterPerHour) / 2.0;
+        }
+        if (m_dAverageConsumptionTotalDistance > 0.1 && (cvtDataDump.m_iEcuVehicleSpeed > 0 || cvtDataDump.m_dEcuInstantConsumptionLiterPerHour > 0.001) )
+            m_textViewConsumptionL100KmAverage.setText(String.format("%.1f", m_dAverageConsumptionTotalLiters * 100.0 / m_dAverageConsumptionTotalDistance));
+        else
+            m_textViewConsumptionL100KmAverage.setText("∞");
+        m_textViewConsumptionTotalLiters.setText(String.format("%.1f", m_dAverageConsumptionTotalLiters));
+        m_textViewConsumptionTotalDistance.setText(String.format("%.1f", m_dAverageConsumptionTotalDistance));
 
         if (-50 != cvtDataDump.m_iEcuCoolanTemp && -40 != cvtDataDump.m_iEcuCoolanTemp) {
             m_textViewEngineTemp.setText(cvtDataDump.m_sEcuCoolanTemp + "°C");
@@ -168,7 +191,13 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarEngineTemp.setProgress((int) (100 * (cvtDataDump.m_iEcuCoolanTemp + 20) / (120 + 20)));
         m_progressBarCvtTemp.setSecondaryProgress(m_progressBarCvtTemp.getProgress());
         m_progressBarCvtTemp.setProgress((int) (100 * (cvtDataDump.m_iDataAtfTemp + 20) / (120 + 20)));
-        m_textViewCvtTemp.setText(cvtDataDump.m_sDataAtfTemp + "°C");
+        if (-50 != cvtDataDump.m_iDataAtfTemp) {
+            m_textViewCvtTemp.setText(cvtDataDump.m_sDataAtfTemp + "°C");
+            m_textViewCvtTempIndicator.setVisibility(View.VISIBLE);
+        } else {
+            m_textViewCvtTemp.setText("∞");
+            m_textViewCvtTempIndicator.setVisibility(View.INVISIBLE);
+        }
         m_textViewCvtTempCount.setText(cvtDataDump.m_sDataAtfTempCount);
 
         String sCvtTempIndicatorString;
@@ -196,13 +225,12 @@ public class DataMonitorFragment extends Fragment {
         m_textViewAwdCurrent.setText(cvtDataDump.m_sAwdDataEtsSolenoid+"A");
         m_textViewAwdRatio.setText(cvtDataDump.m_sAwdDataEtsSolenoidRatio);
 
-        double dGr = cvtDataDump.m_dDataGearRatio;
         String sVirtualGear;
-        if (dGr <= 0.44) sVirtualGear = "6";
-        else if (dGr <= 0.69) sVirtualGear = "5+";
-        else if (dGr <= 0.86) sVirtualGear = "4+";
-        else if (dGr <= 1.11) sVirtualGear = "3+";
-        else if (dGr <= 1.53) sVirtualGear = "2+";
+        if (cvtDataDump.m_dDataGearRatio <= 0.44) sVirtualGear = "6";
+        else if (cvtDataDump.m_dDataGearRatio <= 0.69) sVirtualGear = "5+";
+        else if (cvtDataDump.m_dDataGearRatio <= 0.86) sVirtualGear = "4+";
+        else if (cvtDataDump.m_dDataGearRatio <= 1.11) sVirtualGear = "3+";
+        else if (cvtDataDump.m_dDataGearRatio <= 1.53) sVirtualGear = "2+";
         else sVirtualGear = "1+";
         m_textViewVirtualGear.setText(sVirtualGear);
         m_textViewGearRatio.setText(cvtDataDump.m_sDataGearRatio);
@@ -232,6 +260,7 @@ public class DataMonitorFragment extends Fragment {
         m_progressBarLinePrs.setSecondaryProgress(m_progressBarLinePrs.getProgress());
         m_progressBarLinePrs.setProgress((int) (100 * cvtDataDump.m_dDataLinePrs / 6.375));
         m_textViewLinePrs.setText(cvtDataDump.m_sDataLinePrs);
+        m_textViewLuPrs.setText(cvtDataDump.m_sDataLuPrs);
 
         m_textViewDeterioration.setText(cvtDataDump.m_sCvtfDeteriorationDate + " (+" + cvtDataDump.m_sCvtfDeteriorationDateDelta + ")");
 
@@ -240,12 +269,14 @@ public class DataMonitorFragment extends Fragment {
             sDtc = cvtDataDump.m_sTime;
         else {
             sDtc = "DTC:";
+            if (0 != cvtDataDump.m_iEcuDtcFound) {
+                sDtc += " ECU";
+                m_textViewDtc.setBackgroundColor(Color.YELLOW);
+            }
             if (0 != cvtDataDump.m_iCvtDtcCount) {
                 sDtc += " CVT";
                 m_textViewDtc.setBackgroundColor(Color.RED);
             }
-            if (0 != cvtDataDump.m_iEcuDtcFound)
-                sDtc += " ECU";
         }
         m_textViewDtc.setText(sDtc);
 
@@ -262,5 +293,7 @@ public class DataMonitorFragment extends Fragment {
             if (m_dDiagnosticPriPrsTestMinimum < 0.3) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF0000"));
             else if (m_dDiagnosticPriPrsTestMinimum < 0.5) m_textViewPriPrsTestResult.setBackgroundColor(Color.parseColor("#FFFF8000"));
         }
+
+        m_cvtDataDumpPrevious = cvtDataDump;
     }
 }

@@ -606,6 +606,21 @@ public class BluetoothChatFragment extends Fragment {
             case R.id.start_data_monitor_cvt_only: {
                 if (null != mCVTDiag) {
                     mCVTDiag.m_bReadCvtOnly = true;
+                    mCVTDiag.m_bReadEcuOnly = false;
+                }
+                return true;
+            }
+            case R.id.start_data_monitor_ecu_only: {
+                if (null != mCVTDiag) {
+                    mCVTDiag.m_bReadCvtOnly = false;
+                    mCVTDiag.m_bReadEcuOnly = true;
+                }
+                return true;
+            }
+            case R.id.start_data_monitor_all: {
+                if (null != mCVTDiag) {
+                    mCVTDiag.m_bReadCvtOnly = false;
+                    mCVTDiag.m_bReadEcuOnly = false;
                 }
                 return true;
             }
@@ -675,6 +690,7 @@ public class BluetoothChatFragment extends Fragment {
         int m_iCvtfDeteriorationDate;
         int m_iCvtfDeteriorationDateFirst;
         public boolean m_bReadCvtOnly;
+        public boolean m_bReadEcuOnly;
 
         public CVTDiag(Handler hParentMessageHandler, int iGlobalAction) {
             m_iGlobalAction = iGlobalAction;
@@ -696,6 +712,7 @@ public class BluetoothChatFragment extends Fragment {
             m_iCvtfDeteriorationDate = 0;
             m_iCvtfDeteriorationDateFirst = -1;
             m_bReadCvtOnly = false;
+            m_bReadEcuOnly = false;
         }
 
         public void start() {
@@ -930,7 +947,8 @@ public class BluetoothChatFragment extends Fragment {
                     m_sEcuDataFromIncomingBuffer_EngSpeed = "";
                     m_sEcuDataFromIncomingBuffer_VehicleSpeed = "";
                     if (data.IsDumpValid()) {
-                        BluetoothChatFragment.WriteCvtLog(Constants.CVTDIAG_LOGFILE_PARAMS, data.GetTextStringForFile());
+                        if (!m_bReadEcuOnly)
+                            BluetoothChatFragment.WriteCvtLog(Constants.CVTDIAG_LOGFILE_PARAMS, data.GetTextStringForFile());
                         m_bDisableChatLogging = true;
                         m_bConnectedToReconnectOnLost = true; //Enable reconnection if we got at least 1 good parsable dump
                         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -945,6 +963,8 @@ public class BluetoothChatFragment extends Fragment {
                     }
                     if (m_bReadCvtOnly)
                         m_iNextAction = Constants.CVTDIAG_NEXT_DTC_STEP7_10C0;
+                    else if (m_bReadEcuOnly && data.m_dEcuInstantConsumptionLiterPerHour > 0.001)
+                        m_iNextAction = Constants.CVTDIAG_NEXT_READECU_STEP8_2212060401;
                     else {
                         m_iNextAction = Constants.CVTDIAG_NEXT_READECU_STEP5_ATSP5; // m_iNextAction = Constants.CVTDIAG_NEXT_DTC_STEP7_10C0; - old NextAction when we had only repeating CVT param reading. Now we're moving to reading of ECU after reading CVT
                         m_bCvtDtcDataReceived = false;
@@ -1027,9 +1047,16 @@ public class BluetoothChatFragment extends Fragment {
                         BluetoothChatFragment.WriteCvtLog(Constants.CVTDIAG_LOGFILE_GENERAL, "VehicleSpeed RESULT: " + sIncomingBufferLocalCopy);
                     }
                     m_sEcuDataFromIncomingBuffer_VehicleSpeed = sIncomingBufferLocalCopy;
-                    sendMessage(" A330\r"); //read DTC
-                    m_sWaitingForString = ">";
-                    m_iNextAction = Constants.CVTDIAG_NEXT_READECU_STEP12_DTCRESULT;
+                    if (m_bReadEcuOnly) {
+                        m_iNextAction = Constants.CVTDIAG_NEXT_READPARAMS_STEP9_RESULT;
+                        m_sIncomingBuffer = "046  0: 00 00 00 00 00 00  1: 00 00 00 00 00 00 00  2: 00 00 00 00 00 FF 00  3: 00 00 00 00 00 00 00  4: 00 00 00 00 00 00 00  5: 00 00 00 00 00 00 00  6: 00 00 00 00 00 00 00  7: 00 00 00 00 00 00 00  8: 00 00 00 00 00 00 00  9: 00 00 00 00 00 00 00  A: 00 00 00 00 00 00 00";
+                        NextAction();
+                    }
+                    else {
+                        sendMessage(" A330\r"); //read DTC
+                        m_sWaitingForString = ">";
+                        m_iNextAction = Constants.CVTDIAG_NEXT_READECU_STEP12_DTCRESULT;
+                    }
                     break;
                 }
                 case Constants.CVTDIAG_NEXT_READECU_STEP12_DTCRESULT: {
@@ -1139,6 +1166,7 @@ public class BluetoothChatFragment extends Fragment {
         String m_sCvtDataDump;
         boolean m_bDumpValid;
         int[] m_DataArrayInt;
+        public Time m_tTime;
         public String m_sTime;
         public String m_sDataLeverPosition;
         public String m_sDataVehicleSpeed;
@@ -1198,6 +1226,7 @@ public class BluetoothChatFragment extends Fragment {
         public boolean m_bDataBrakeSw;
         public double m_dAwdDataEtsSolenoid;
         public int m_iEcuCoolanTemp;
+        public int m_iEcuVehicleSpeed;
         public double m_dEcuInstantConsumptionLiterPerHour;
         public double m_dEcuInstantConsumptionLiterPer100Km;
         public int m_iCvtfDeteriorationDate;
@@ -1295,9 +1324,9 @@ public class BluetoothChatFragment extends Fragment {
         }
         private void ParseArrayToParams() {
             // Time
-            Time t = new Time();
-            t.setToNow();
-            m_sTime = t.format("%H:%M:%S");
+            m_tTime = new Time();
+            m_tTime.setToNow();
+            m_sTime = m_tTime.format("%H:%M:%S");
 
             // Lever Position from 7_6 [54]
             if (0 == m_DataArrayInt[54])
@@ -1396,12 +1425,12 @@ public class BluetoothChatFragment extends Fragment {
             m_sEcuInjPulse = String.format("%.2f",dEcuInjPulse);
             int iEcuEngSpeed = (int) (m_EcuDataArrayInt[2] * 12.5);
             m_sEcuEngSpeed = String.format("%d", iEcuEngSpeed);
-            int iEcuVehicleSpeed = m_EcuDataArrayInt[3] * 2;
-            m_sEcuVehicleSpeed = String.format("%d", iEcuVehicleSpeed);
+            m_iEcuVehicleSpeed = m_EcuDataArrayInt[3] * 2;
+            m_sEcuVehicleSpeed = String.format("%d", m_iEcuVehicleSpeed);
             m_dEcuInstantConsumptionLiterPerHour = (dEcuInjPulse*0.001) * (iEcuEngSpeed/60)/2 * 6 * (0.296/60) * 3600;
             m_sEcuInstantConsumptionLiterPerHour = String.format("%.1f",m_dEcuInstantConsumptionLiterPerHour);
-            if (0 != iEcuVehicleSpeed) {
-                m_dEcuInstantConsumptionLiterPer100Km = m_dEcuInstantConsumptionLiterPerHour * 100 / iEcuVehicleSpeed;
+            if (0 != m_iEcuVehicleSpeed) {
+                m_dEcuInstantConsumptionLiterPer100Km = m_dEcuInstantConsumptionLiterPerHour * 100 / m_iEcuVehicleSpeed;
                 m_sEcuInstantConsumptionLiterPer100Km = String.format("%.1f", m_dEcuInstantConsumptionLiterPer100Km);
             }
             else {

@@ -41,7 +41,9 @@
     <string name="secure_connect">Connect a device - Secure</string>
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
-    <string name="start_data_monitor_cvt_only">Skip reading AWD/ECU</string>
+    <string name="start_data_monitor_cvt_only">Read CVT Only</string>
+    <string name="start_data_monitor_ecu_only">Read ECU Only</string>
+    <string name="start_data_monitor_all">Read All</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

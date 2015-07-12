@@ -288,10 +288,96 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" L/100KM Inst.Cons."
+            android:text=" L/100KM"
             android:id="@+id/textViewConsumptionL100KmLabel"
             android:layout_alignTop="@+id/textViewConsumptionL100Km"
             android:layout_toRightOf="@+id/textViewConsumptionL100Km"
+            android:textColor="#FF444444" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=" Instant"
+            android:id="@+id/textViewConsumptionL100KmLabel2"
+            android:textColor="#FFBBBBBB"
+            android:layout_below="@+id/textViewConsumptionL100KmLabel"
+            android:layout_marginTop="-10dp"
+            android:layout_alignLeft="@+id/textViewConsumptionL100KmLabel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="23.5"
+            android:id="@+id/textViewConsumptionL100KmAverage"
+            android:textStyle="bold"
+            android:layout_below="@+id/progressBarConsumptionL100Km"
+            android:layout_centerHorizontal="true"
+            android:textColor="#FF222222" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="l/100km"
+            android:id="@+id/textViewConsumptionL100KmAverageUnits"
+            android:textColor="#FF444444"
+            android:layout_toRightOf="@+id/textViewConsumptionL100KmAverage"
+            android:layout_alignTop="@+id/textViewConsumptionL100KmAverage" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=" "
+            android:id="@+id/textViewConsumptionTotalDelimiter"
+            android:layout_below="@+id/textViewConsumptionL100KmAverage"
+            android:layout_marginTop="-7dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="#FF444444" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="L"
+            android:id="@+id/textViewConsumptionTotalLitersUnits"
+            android:layout_below="@+id/textViewConsumptionL100KmLabel"
+            android:layout_toLeftOf="@+id/textViewConsumptionTotalDelimiter"
+            android:layout_alignTop="@+id/textViewConsumptionTotalDelimiter"
+            android:textColor="#FF444444" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="423.5"
+            android:id="@+id/textViewConsumptionTotalLiters"
+            android:textStyle="bold"
+            android:layout_toLeftOf="@+id/textViewConsumptionTotalLitersUnits"
+            android:layout_alignTop="@+id/textViewConsumptionTotalDelimiter"
+            android:textColor="#FF222222" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="2869.8"
+            android:id="@+id/textViewConsumptionTotalDistance"
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/textViewConsumptionTotalDelimiter"
+            android:layout_alignTop="@+id/textViewConsumptionTotalDelimiter"
+            android:textColor="#FF222222" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="KM"
+            android:id="@+id/textViewConsumptionTotalDistanceUnits"
+            android:layout_alignTop="@+id/textViewConsumptionTotalDelimiter"
+            android:layout_toRightOf="@+id/textViewConsumptionTotalDistance"
             android:textColor="#FF444444" />
 
         <TextView
@@ -313,6 +399,17 @@
             android:textColor="#FF444444"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/textViewConsumptionLH" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text=" Inst."
+            android:id="@+id/textViewConsumptionLHUnits2"
+            android:textColor="#FFBBBBBB"
+            android:layout_below="@+id/textViewConsumptionLHUnits"
+            android:layout_marginTop="-10dp"
+            android:layout_alignLeft="@+id/textViewConsumptionLHUnits" />
 
         <ProgressBar
             style="@style/CustomProgressBar"
@@ -786,7 +883,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="0.99/0.98"
             android:id="@+id/textViewPriPrsTestResult"
-            android:textColor="#FF444444"
+            android:textColor="#FF222222"
             android:layout_above="@+id/progressBarPriPrs"
             android:layout_alignParentRight="true"
             android:textStyle="bold"
@@ -839,7 +936,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text=" MPa LINE Pressure"
+            android:text=" MPa LINE PRS"
             android:id="@+id/textViewLinePrsLabel"
             android:layout_toRightOf="@+id/textViewLinePrs"
             android:layout_alignTop="@+id/textViewLinePrs"
@@ -854,6 +951,36 @@
             android:layout_alignParentLeft="true"
             android:textStyle="bold"
             android:layout_below="@+id/textViewLinePrs" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=" MPa"
+            android:id="@+id/textViewLuPrsUnits"
+            android:textColor="#FF444444"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/textViewLuPrs" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="-0.50"
+            android:id="@+id/textViewLuPrs"
+            android:textStyle="bold"
+            android:layout_below="@+id/progressBarLinePrs"
+            android:layout_toLeftOf="@+id/textViewLuPrsUnits" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="LU "
+            android:id="@+id/textViewLuPrsLabel"
+            android:textColor="#FF444444"
+            android:layout_below="@+id/progressBarLinePrs"
+            android:layout_toLeftOf="@+id/textViewLuPrs" />
 
         <TextView
             android:layout_width="wrap_content"
