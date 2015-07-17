@@ -46,6 +46,9 @@ public class MainActivity extends SampleActivityBase
     public static final String TAG = "MainActivity";
     private static final long REPEAT_INTERVAL = 300 * 1000;
 
+    private static final int ECU_ERR = -128;
+    private static final int CVT_ERR = -129;
+
     // Whether the Log Fragment is currently shown
     private boolean mLogShown;
     private TextToSpeech tts;
@@ -164,6 +167,23 @@ public class MainActivity extends SampleActivityBase
                 }
             }
         }
+
+        if(cvtDataDump.m_iEcuDtcFound != 0){
+            if(!repeatNotify.containsKey(ECU_ERR)){
+                tts.speak("Error Engine! AAAA!!!! " + cvtDataDump.m_iDataAtfTemp, TextToSpeech.QUEUE_FLUSH, null);
+                repeatNotify.put(ECU_ERR, System.currentTimeMillis());
+            }
+
+        }
+
+        if(cvtDataDump.m_iCvtDtcCount != 0){
+            if(!repeatNotify.containsKey(CVT_ERR)){
+                tts.speak("Error Transmission! AAAA!!!! " + cvtDataDump.m_iDataAtfTemp, TextToSpeech.QUEUE_FLUSH, null);
+                repeatNotify.put(CVT_ERR, System.currentTimeMillis());
+            }
+
+        }
+
 
 
     }
