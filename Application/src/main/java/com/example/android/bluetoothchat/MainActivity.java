@@ -54,7 +54,7 @@ public class MainActivity extends SampleActivityBase
     private TextToSpeech tts;
     private HashMap<Integer, Long> repeatNotify = new HashMap<>();
 
-    private static final int temp[] = { -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 95, 100, 105, 110 };
+    private static final int temp[] = { -30, -20, -10, 0, 10, 20, 30, 41, 50, 60, 70, 80, 85, 90, 95, 100, 105, 110 };
 
     BluetoothChatFragment m_fragment1;
     DataMonitorFragment m_fragment2;
